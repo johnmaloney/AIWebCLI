@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Pipes
 {
-    internal class PipelineInitializer
+    public class PipelineInitializer : IPipelineInitializer
     {
+        public Func<IPipe> PipeInitializer { get; set; }
+        public Func<string, object, string[], Dictionary<string, object>, IContext> ContextInitializer { get; set; }
     }
 }
