@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using WebCLI.Core.Contracts;
+using System.Threading.Tasks;
+using WebCLI.Core.Models;
 
 namespace WebCLI.Core.Contracts
 {
     public interface IPipelineInitializer
     {
-        Func<IPipe> PipeInitializer { get; set; }
-        Func<string, object, string[], Dictionary<string, object>, IContext> ContextInitializer { get; set; }
+        Task<ICommandResult> ExecuteCommandPipeline(Command command);
+        Task<IQueryResult> ExecuteQueryPipeline(Query query);
     }
 }

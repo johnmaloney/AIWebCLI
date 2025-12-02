@@ -1,9 +1,11 @@
-﻿namespace WebCLI.Core.Contracts
+namespace WebCLI.Core.Contracts
 {
     public interface ICriteria
     {
-        string Identifier { get; }
+        // The name of the command or query, which also acts as its identifier for pipeline lookup.
+        string Name { get; }
 
-        IPipe GetPipeline(IPipe parentPipeline);
+        // The dictionary of criteria is now the primary way to pass parameters.
+        // No longer includes GetPipeline(IPipe) as pipeline construction is dynamic.
     }
 }
