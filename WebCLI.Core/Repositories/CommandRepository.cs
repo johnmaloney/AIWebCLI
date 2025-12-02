@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net.Mime;
 using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Repositories
@@ -10,9 +9,8 @@ namespace WebCLI.Core.Repositories
     {
         #region Fields
 
-        private Dictionary<string, PipelineInitializer> pipelineInitializers =
-            new Dictionary<string, PipelineInitializer>();
         private readonly ConcurrentDictionary<string, Func<IContext, IPipe>> commandActions;
+        private readonly ConcurrentDictionary<string, IPipelineInitializer> pipelineInitializers;
 
         #endregion
 
@@ -33,31 +31,23 @@ namespace WebCLI.Core.Repositories
         public CommandRepository()
         {
             commandActions = new ConcurrentDictionary<string, Func<IContext, IPipe>>();
+            pipelineInitializers = new ConcurrentDictionary<string, IPipelineInitializer>();
         }
 
         public void AddCommandDelegate(string identifier, 
-            Func<IContext, IPipe> actionDelegate)
+            Func<IContext, IPipe> actionDelegate,
+            IPipelineInitializer initializer = null)
         {
             commandActions.AddOrUpdate(
                 identifier.ToLowerInvariant(), actionDelegate, 
                 (cmdName, action) => action = actionDelegate);
-        }
 
-        #endregion
-
-        #region Private Classes
-
-        private class PipelineInitializer
-        {
-            public Func<IPipe> PipeInitializer { get; set; }
-
-            public Func<
-                string, 
-                object, 
-                string[], 
-                Dictionary<string, object>, 
-                IContext>
-                ContextInitializer { get; set; }
+            if (initializer != null)
+            {
+                pipelineInitializers.AddOrUpdate(
+                    identifier.ToLowerInvariant(), initializer,
+                    (cmdName, existingInitializer) => initializer);
+            }
         }
 
         #endregion
