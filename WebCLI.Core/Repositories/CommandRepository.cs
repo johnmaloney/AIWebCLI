@@ -50,6 +50,11 @@ namespace WebCLI.Core.Repositories
             }
         }
 
+        public void AddCommandDelegate(string identifier, Func<IContext, IPipe> actionDelegate)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

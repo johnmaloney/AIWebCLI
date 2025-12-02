@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCLI.Core", "WebCLI.Core\WebCLI.Core.csproj", "{232BED2F-C0E9-46AC-D42F-11CB11672637}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCLI.Core.Tests", "WebCLI.Core.Tests\WebCLI.Core.Tests.csproj", "{4BD5150D-B143-8C0B-6FB3-4F2F570901A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{232BED2F-C0E9-46AC-D42F-11CB11672637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{232BED2F-C0E9-46AC-D42F-11CB11672637}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{232BED2F-C0E9-46AC-D42F-11CB11672637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BD5150D-B143-8C0B-6FB3-4F2F570901A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD5150D-B143-8C0B-6FB3-4F2F570901A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BD5150D-B143-8C0B-6FB3-4F2F570901A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD5150D-B143-8C0B-6FB3-4F2F570901A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

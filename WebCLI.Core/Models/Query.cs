@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebCLI.Core.Models
 {
-    internal class Query
+    public class Query
     {
     }
 }

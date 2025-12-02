@@ -1,4 +1,5 @@
 using WebCLI.Core.Models;
+using Xunit;
 
 namespace WebCLI.Core.Tests.Models
 {
@@ -14,11 +15,11 @@ namespace WebCLI.Core.Tests.Models
 
             // Act
             command.Name = name;
-            command.Description = description;
+            command.Descriptor = description;
 
             // Assert
             Assert.Equal(name, command.Name);
-            Assert.Equal(description, command.Description);
+            Assert.Equal(description, command.Descriptor);
         }
 
         [Fact]
@@ -29,11 +30,11 @@ namespace WebCLI.Core.Tests.Models
             var description = "Another test description.";
 
             // Act
-            var command = new Command { Name = name, Description = description };
+            var command = new Command { Name = name, Descriptor = description };
 
             // Assert
             Assert.Equal(name, command.Name);
-            Assert.Equal(description, command.Description);
+            Assert.Equal(description, command.Descriptor);
         }
     }
 }
