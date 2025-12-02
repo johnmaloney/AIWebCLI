@@ -1,21 +1,33 @@
-﻿
-
-using System.Collections.Generic;
-using System.Linq;
-using WCLI.Core.Contracts;
+using WebCLI.Core.Contracts;
+using WebCLI.Core.Models;
 
 namespace WebCLI.Core.Pipes
 {
-    public class 
-        GeneralContext : APipeContext//, IEnvironmentalContext
+    public class GeneralContext : APipeContext
     {
-        public string Input { get; set; }
+        public Command Command { get; set; }
+        public Query Query { get; set; }
+        public ILogger Logger { get; set; } // Example for logging within pipes
+        // Add any other general-purpose properties that pipes might need
 
-        public GeneralContext(IEnvironmentRepository environments, Dictionary<string, object> options, params string[] arguments)
+        public GeneralContext()
         {
-            this.Arguments = arguments.ToList();
-            this.Environments = environments;
-            this.Options = options;
+            // Initialize with a default logger or inject one
+            Logger = new ConsoleLogger(); 
         }
+    }
+
+    // Simple console logger for demonstration
+    public class ConsoleLogger : ILogger
+    {
+        public void Log(string message)
+        {
+            System.Console.WriteLine($"[LOG] {message}");
+        }
+    }
+
+    public interface ILogger
+    {
+        void Log(string message);
     }
 }

@@ -1,12 +1,19 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Models
 {
-    public class Query
+    public class Query : IQueryCriteria
     {
+        public string Name { get; set; }
+        public Dictionary<string, string> Criteria { get; set; }
+        public IAuthContext UserContext { get; set; } // Added for authentication context
+
+        public Query(string name, Dictionary<string, string> criteria = null, IAuthContext userContext = null)
+        {
+            Name = name;
+            Criteria = criteria ?? new Dictionary<string, string>();
+            UserContext = userContext;
+        }
     }
 }
