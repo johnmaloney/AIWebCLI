@@ -57,17 +57,24 @@ namespace WebCLI.Core.Tests.Extensions
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("WebCLI.Core.Tests")] // Missing comma and class name
         [InlineData("WebCLI.Core.Tests,")] // Missing class name
         [InlineData(",WebCLI.Core.Tests.TestReflectableClass")] // Missing assembly name
+        [InlineData("WebCLI.Core.Tests")] // Missing comma and class name
         public void InstantiateObject_ThrowsNotSupportedException_ForImproperlyFormedIdentifier(string typeIdentifier)
         {
             // Act & Assert
             var ex = Assert.Throws<NotSupportedException>(() => typeIdentifier.InstantiateObject<TestReflectableClass>());
-            Assert.Contains("The type reference", ex.Message);
             Assert.Contains("is not properly formed", ex.Message);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void InstantiateObject_ThrowsNotSupportedException_ForNullOrEmptyIdentifier(string typeIdentifier)
+        {
+            // Act & Assert
+            var ex = Assert.Throws<NotSupportedException>(() => typeIdentifier.InstantiateObject<TestReflectableClass>());
+            Assert.Contains("The type reference cannot be null or whitespace.", ex.Message);
         }
     }
 }
