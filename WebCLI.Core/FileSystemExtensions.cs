@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,29 +17,27 @@ namespace WebCLI.Core
         /// <returns></returns>
         public static bool IsDirectoryPath(this string location)
         {
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                return false;
+            }
+
+            // Check if the path exists
+            if (File.Exists(location))
+            {
+                // Get the file attributes for file or directory
+                FileAttributes attr = File.GetAttributes(location);
+                // Check if it's a directory
+                return attr.HasFlag(FileAttributes.Directory);
+            }
+            else if (Directory.Exists(location))
+            {
+                return true;
+            }
+
+            // If it doesn't exist, we can infer if it's meant to be a directory by the presence of an extension
             var hasExtension = Path.GetExtension(location);
-
-            // Dealing with a Directory //
-            if (string.IsNullOrEmpty(hasExtension))
-            {
-                if (File.Exists(location))
-                {
-                    // get the file attributes for file or directory
-                    FileAttributes attr = File.GetAttributes(location);
-
-                    return (attr.HasFlag(FileAttributes.Directory));
-                }
-                else
-                    return true;
-            }
-            else if (hasExtension != null)
-            {
-                if (File.Exists(location))
-                {
-                    return false;
-                }
-            }
-            return false;
+            return string.IsNullOrEmpty(hasExtension);
         }
     }
 }

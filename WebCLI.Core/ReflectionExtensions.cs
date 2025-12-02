@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,13 +17,18 @@ namespace WebCLI.Core
         /// <exception cref="NotSupportedException">Throws when the casting of the type is not possible and if the assembly name is incorrect</exception>
         public static T InstantiateObject<T>(this string typeIdentifier)
         {
+            if (string.IsNullOrWhiteSpace(typeIdentifier))
+            {
+                throw new NotSupportedException("The type reference cannot be null or whitespace.");
+            }
+
             object instance;
             var split = typeIdentifier.Split(',');
             if (split.Length > 1)
             {
                 try
                 {
-                    var plus = Activator.CreateInstance(split[0], split[1]);
+                    var plus = Activator.CreateInstance(split[0].Trim(), split[1].Trim());
                     instance = plus.Unwrap();
 
                 }
