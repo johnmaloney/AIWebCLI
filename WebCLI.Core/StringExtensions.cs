@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,13 +61,14 @@ namespace WebCLI.Core
 
             try
             {
-                if (item[location] != null) return false;
+                // The original logic was inverted. It should return true if the item at the location is NOT null.
+                // And false if it IS null or an exception occurs (e.g., out of bounds).
+                return item[location] != null;
             }
             catch (Exception)
             {
                 return false;
             }
-            return true;
         }
     }
 }
