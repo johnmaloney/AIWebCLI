@@ -1,29 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WCLI.Core.Contracts
+namespace WebCLI.Core.Contracts
 {
     public interface IEnvironmentInfo
-    { 
-        #region Fields
-
-
-
-        #endregion
-
-        #region Properties
-
-
-
-        #endregion
-
-        #region Methods
-
-
-
-        #endregion
+    {
+        // Example properties, adjust as needed
+        string OSVersion { get; }
+        string MachineName { get; }
+        string CurrentDirectory { get; }
     }
 }
