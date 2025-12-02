@@ -59,9 +59,19 @@ namespace WebCLI.Core.Tests.Extensions
         [Theory]
         [InlineData("WebCLI.Core.Tests,")] // Missing class name
         [InlineData(",WebCLI.Core.Tests.TestReflectableClass")] // Missing assembly name
-        [InlineData("WebCLI.Core.Tests")] // Missing comma and class name
         public void InstantiateObject_ThrowsNotSupportedException_ForImproperlyFormedIdentifier(string typeIdentifier)
         {
+            // Act & Assert
+            var ex = Assert.Throws<NotSupportedException>(() => typeIdentifier.InstantiateObject<TestReflectableClass>());
+            Assert.Contains("The Assembly Name given was not found.", ex.Message);
+        }
+
+        [Fact]
+        public void InstantiateObject_ThrowsNotSupportedException_ForMissingDelimiter()
+        {
+            // Arrange
+            var typeIdentifier = "WebCLI.Core.Tests"; // Missing comma and class name
+
             // Act & Assert
             var ex = Assert.Throws<NotSupportedException>(() => typeIdentifier.InstantiateObject<TestReflectableClass>());
             Assert.Contains("is not properly formed", ex.Message);
