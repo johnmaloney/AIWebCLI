@@ -20,6 +20,31 @@ namespace WebCLI.Core.Tests.Extensions
             Assert.Equal(expected, result);
         }
 
+        [Fact]
+        public void RightSideOf_ThrowsException_WhenSplitCharacterNotFound()
+        {
+            // Arrange
+            string value = "nosplit";
+            string splitCharacter = ":";
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => value.RightSideOf(splitCharacter));
+        }
+
+        [Fact]
+        public void RightSideOf_ReturnsEmptyString_WhenInputIsEmpty()
+        {
+            // Arrange
+            string value = "";
+            string splitCharacter = ":";
+
+            // Act
+            var result = value.RightSideOf(splitCharacter);
+
+            // Assert
+            Assert.Equal("", result);
+        }
+
         [Theory]
         [InlineData("p:password", ":", "p")]
         [InlineData("key-value", "-", "key")]
@@ -32,6 +57,36 @@ namespace WebCLI.Core.Tests.Extensions
             // Assert
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void LeftSideOf_ReturnsOriginalString_WhenSplitCharacterNotFound()
+        {
+            // Arrange
+            string value = "nosplit";
+            string splitCharacter = ":";
+            string expected = "nosplit";
+
+            // Act
+            var result = value.LeftSideOf(splitCharacter);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void LeftSideOf_ReturnsEmptyString_WhenInputIsEmpty()
+        {
+            // Arrange
+            string value = "";
+            string splitCharacter = ":";
+
+            // Act
+            var result = value.LeftSideOf(splitCharacter);
+
+            // Assert
+            Assert.Equal("", result);
+        }
+
 
         [Fact]
         public void Has_ReturnsTrue_WhenKeyExists()
@@ -88,6 +143,19 @@ namespace WebCLI.Core.Tests.Extensions
         }
 
         [Fact]
+        public void Has_ReturnsFalse_WhenItemDoesNotHaveContainsKeyMethod()
+        {
+            // Arrange
+            dynamic item = new object(); // A simple object without ContainsKey
+
+            // Act
+            var result = StringExtensions.Has(item, "node1");
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
         public void HasCollection_ReturnsFalse_WhenItemIsNull()
         {
             // Arrange
@@ -137,6 +205,32 @@ namespace WebCLI.Core.Tests.Extensions
 
             // Assert
             Assert.True(result);
+        }
+
+        [Fact]
+        public void HasCollection_ReturnsFalse_WhenItemIsNotIndexable()
+        {
+            // Arrange
+            dynamic item = new object(); // A simple object that is not indexable
+
+            // Act
+            var result = StringExtensions.HasCollection(item, 0);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void HasCollection_ReturnsFalse_WhenCollectionIsEmpty()
+        {
+            // Arrange
+            dynamic item = new List<object>(); // An empty list
+
+            // Act
+            var result = StringExtensions.HasCollection(item, 0);
+
+            // Assert
+            Assert.False(result);
         }
     }
 }
