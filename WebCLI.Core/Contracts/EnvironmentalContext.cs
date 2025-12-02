@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WCLI.Core.Contracts;
+using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Contracts
 {
