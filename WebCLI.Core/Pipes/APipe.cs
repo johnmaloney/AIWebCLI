@@ -1,76 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebCLI.Core.Contracts;
+using WebCLI.Core.Models;
 
 namespace WebCLI.Core.Pipes
 {
-    public abstract class APipe : IPipe
+    public abstract class APipe
     {
-        #region Fields
+        protected APipe _nextPipe;
 
-        private Queue<IPipe> pipes = new Queue<IPipe>();
-        private IList<IPipe> iterationPipeline = new List<IPipe>();
-
-        #endregion
-
-        #region Properties
-
-        protected bool HasNextPipe
+        public APipe SetNext(APipe nextPipe)
         {
-            get
+            _nextPipe = nextPipe;
+            return nextPipe;
+        }
+
+        public virtual async Task<ICommandResult> Handle(IPipeContext context)
+        {
+            if (_nextPipe != null)
             {
-                return this.pipes.Count > 0;
+                return await _nextPipe.Handle(context);
             }
+            return new CommandResult(true, "Pipeline completed.");
         }
-
-        public virtual IPipe NextPipe
-        {
-            get
-            {
-                if (pipes.Count > 0)
-                    return pipes.Dequeue();
-                else
-                    return null;
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public virtual IPipe ExtendWith(IPipe pipe)
-        {
-            this.pipes.Enqueue(pipe);
-            // Support method chaining //
-            return this;
-        }
-
-        public virtual IPipe IterateWith(IPipe pipe)
-        {
-            // This collection is used iterate an item within the parent pipeline //
-            this.iterationPipeline.Add(pipe);
-
-            return this;
-        }
-
-        public abstract Task Process(IContext context);
-
-        public async Task Iterate(IContext context)
-        {
-            foreach (var iteration in iterationPipeline)
-            {
-                await iteration.Process(context);
-            }
-        }
-
-        public void CutPipeline()
-        {
-            this.pipes = new Queue<IPipe>();
-        }
-
-        #endregion
     }
 }
