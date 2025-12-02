@@ -1,16 +1,19 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Models
 {
-    public class Command
+    public class Command : ICommandCriteria
     {
         public string Name { get; set; }
-        public string Directive { get; set; }
-        public string Descriptor { get; set; }
-        public string CommandPipeType { get; set; }
+        public Dictionary<string, string> Criteria { get; set; }
+        public IAuthContext UserContext { get; set; } // Added for authentication context
+
+        public Command(string name, Dictionary<string, string> criteria = null, IAuthContext userContext = null)
+        {
+            Name = name;
+            Criteria = criteria ?? new Dictionary<string, string>();
+            UserContext = userContext;
+        }
     }
 }
