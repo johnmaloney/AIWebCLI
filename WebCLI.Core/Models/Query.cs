@@ -7,7 +7,7 @@ namespace WebCLI.Core.Models
     {
         public string Name { get; set; }
         public Dictionary<string, string> Criteria { get; set; }
-        public IAuthContext UserContext { get; set; } // Added for authentication context
+        public IAuthContext UserContext { get; set; }
 
         public Query(string name, Dictionary<string, string> criteria = null, IAuthContext userContext = null)
         {
