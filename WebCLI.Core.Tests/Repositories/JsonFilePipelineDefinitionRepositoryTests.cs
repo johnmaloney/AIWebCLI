@@ -1,4 +1,4 @@
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 using WebCLI.Core.Models.Definitions;
@@ -6,19 +6,19 @@ using WebCLI.Core.Repositories;
 
 namespace WebCLI.Core.Tests.Repositories
 {
-    [TestFixture]
+    [TestClass]
     public class JsonFilePipelineDefinitionRepositoryTests
     {
         private string _testPipelinePath;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUp()
         {
             _testPipelinePath = Path.Combine(Path.GetTempPath(), "WebCLITestPipelines", Path.GetRandomFileName());
             Directory.CreateDirectory(_testPipelinePath);
         }
 
-        [TearDown]
+        [TestCleanup]
         public void TearDown()
         {
             if (Directory.Exists(_testPipelinePath))
@@ -32,7 +32,7 @@ namespace WebCLI.Core.Tests.Repositories
             File.WriteAllText(Path.Combine(_testPipelinePath, fileName), content);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAllPipelineDefinitions_ShouldReturnAllDefinitionsInDirectory()
         {
             // Arrange
@@ -50,7 +50,7 @@ namespace WebCLI.Core.Tests.Repositories
             Assert.IsTrue(definitions.Any(d => d.Name == "TestQuery1"));
         }
 
-        [Test]
+        [TestMethod]
         public void GetPipelineDefinition_ShouldReturnCorrectDefinitionByName()
         {
             // Arrange
@@ -67,7 +67,7 @@ namespace WebCLI.Core.Tests.Repositories
             Assert.AreEqual("Specific Description", definition.Description);
         }
 
-        [Test]
+        [TestMethod]
         public void GetPipelineDefinition_ShouldBeCaseInsensitive()
         {
             // Arrange
@@ -82,7 +82,7 @@ namespace WebCLI.Core.Tests.Repositories
             Assert.AreEqual("CaseSensitiveTest", definition.Name);
         }
 
-        [Test]
+        [TestMethod]
         public void GetPipelineDefinition_ShouldReturnNullIfNotFound()
         {
             // Arrange
@@ -96,20 +96,19 @@ namespace WebCLI.Core.Tests.Repositories
             Assert.IsNull(definition);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_ShouldHandleNonExistentDirectory()
         {
             // Arrange
             var nonExistentPath = Path.Combine(Path.GetTempPath(), "WebCLINonExistent", Path.GetRandomFileName());
-            // Act
             var repository = new JsonFilePipelineDefinitionRepository(nonExistentPath);
 
-            // Assert
-            Assert.DoesNotThrow(() => repository.GetAllPipelineDefinitions());
-            Assert.IsEmpty(repository.GetAllPipelineDefinitions());
+            // Act & Assert
+            Assert.IsNotNull(repository.GetAllPipelineDefinitions()); // Should not throw
+            Assert.AreEqual(0, repository.GetAllPipelineDefinitions().Count()); // Should be empty
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_ShouldHandleEmptyDirectory()
         {
             // Arrange
@@ -120,10 +119,10 @@ namespace WebCLI.Core.Tests.Repositories
 
             // Assert
             Assert.IsNotNull(definitions);
-            Assert.IsEmpty(definitions);
+            Assert.AreEqual(0, definitions.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_ShouldIgnoreInvalidJsonFiles()
         {
             // Arrange

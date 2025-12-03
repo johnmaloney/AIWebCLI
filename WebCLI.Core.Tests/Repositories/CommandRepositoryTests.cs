@@ -1,25 +1,27 @@
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Repositories;
 using System;
 using WebCLI.Core.Models;
+using System.Collections.Generic;
 
 namespace WebCLI.Core.Tests.Repositories
 {
+    [TestClass]
     public class CommandRepositoryTests
     {
-        [Fact]
+        [TestMethod]
         public void CommandRepository_CanBeInstantiated()
         {
             // Arrange & Act
             var repository = new CommandRepository();
 
             // Assert
-            Assert.NotNull(repository);
+            Assert.IsNotNull(repository);
         }
 
-        [Fact]
+        [TestMethod]
         public void AddCommandDelegate_AddsNewCommand()
         {
             // Arrange
@@ -34,10 +36,10 @@ namespace WebCLI.Core.Tests.Repositories
             // Assert
             var mockContext = new Mock<IContext>();
             mockContext.SetupGet(c => c.Identifier).Returns(commandIdentifier);
-            Assert.Equal(mockPipe.Object, repository[mockContext.Object]);
+            Assert.AreEqual(mockPipe.Object, repository[mockContext.Object]);
         }
 
-        [Fact]
+        [TestMethod]
         public void AddCommandDelegate_UpdatesExistingCommand()
         {
             // Arrange
@@ -56,10 +58,10 @@ namespace WebCLI.Core.Tests.Repositories
             // Assert
             var mockContext = new Mock<IContext>();
             mockContext.SetupGet(c => c.Identifier).Returns(commandIdentifier);
-            Assert.Equal(mockPipe2.Object, repository[mockContext.Object]);
+            Assert.AreEqual(mockPipe2.Object, repository[mockContext.Object]);
         }
 
-        [Fact]
+        [TestMethod]
         public void AddCommandDelegate_WithPipelineInitializer_AddsInitializer()
         {
             // Arrange
@@ -72,16 +74,13 @@ namespace WebCLI.Core.Tests.Repositories
             // Act
             repository.AddCommandDelegate(commandIdentifier, commandDelegate, mockInitializer.Object);
 
-            // Assert - This requires internal knowledge of CommandRepository to verify the initializer was added.
-            // For proper testing, a method to retrieve the initializer would be needed, or
-            // we could test the behavior that relies on the initializer.
-            // For now, we'll assume if it's passed, it's stored.
+            // Assert
             var mockContext = new Mock<IContext>();
             mockContext.SetupGet(c => c.Identifier).Returns(commandIdentifier);
-            Assert.Equal(mockPipe.Object, repository[mockContext.Object]); // Still confirms the command delegate works
+            Assert.AreEqual(mockPipe.Object, repository[mockContext.Object]); 
         }
 
-        [Fact]
+        [TestMethod]
         public void Indexer_ReturnsCorrectPipe_ForExistingCommand()
         {
             // Arrange
@@ -98,10 +97,10 @@ namespace WebCLI.Core.Tests.Repositories
             var result = repository[mockContext.Object];
 
             // Assert
-            Assert.Equal(mockPipe.Object, result);
+            Assert.AreEqual(mockPipe.Object, result);
         }
 
-        [Fact]
+        [TestMethod]
         public void Indexer_ThrowsKeyNotFoundException_ForNonExistentCommand()
         {
             // Arrange
@@ -111,7 +110,7 @@ namespace WebCLI.Core.Tests.Repositories
             mockContext.SetupGet(c => c.Identifier).Returns(nonExistentCommand);
 
             // Act & Assert
-            Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => repository[mockContext.Object]);
+            Assert.ThrowsException<KeyNotFoundException>(() => repository[mockContext.Object]);
         }
     }
 }

@@ -1,24 +1,26 @@
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Repositories;
 using System;
+using System.Collections.Generic;
 
 namespace WebCLI.Core.Tests.Repositories
 {
+    [TestClass]
     public class QueryRepositoryTests
     {
-        [Fact]
+        [TestMethod]
         public void QueryRepository_CanBeInstantiated()
         {
             // Arrange & Act
             var repository = new QueryRepository();
 
             // Assert
-            Assert.NotNull(repository);
+            Assert.IsNotNull(repository);
         }
 
-        [Fact]
+        [TestMethod]
         public void AddQueryDelegate_AddsNewQuery()
         {
             // Arrange
@@ -33,10 +35,10 @@ namespace WebCLI.Core.Tests.Repositories
             // Assert
             var mockQueryCriteria = new Mock<IQueryCriteria>();
             mockQueryCriteria.SetupGet(c => c.Identifier).Returns(queryIdentifier);
-            Assert.Equal(mockQueryResult.Object, repository[mockQueryCriteria.Object]);
+            Assert.AreEqual(mockQueryResult.Object, repository[mockQueryCriteria.Object]);
         }
 
-        [Fact]
+        [TestMethod]
         public void AddQueryDelegate_UpdatesExistingQuery()
         {
             // Arrange
@@ -55,10 +57,10 @@ namespace WebCLI.Core.Tests.Repositories
             // Assert
             var mockQueryCriteria = new Mock<IQueryCriteria>();
             mockQueryCriteria.SetupGet(c => c.Identifier).Returns(queryIdentifier);
-            Assert.Equal(mockQueryResult2.Object, repository[mockQueryCriteria.Object]);
+            Assert.AreEqual(mockQueryResult2.Object, repository[mockQueryCriteria.Object]);
         }
 
-        [Fact]
+        [TestMethod]
         public void Indexer_ReturnsCorrectQueryResult_ForExistingQuery()
         {
             // Arrange
@@ -75,10 +77,10 @@ namespace WebCLI.Core.Tests.Repositories
             var result = repository[mockQueryCriteria.Object];
 
             // Assert
-            Assert.Equal(mockQueryResult.Object, result);
+            Assert.AreEqual(mockQueryResult.Object, result);
         }
 
-        [Fact]
+        [TestMethod]
         public void Indexer_ThrowsKeyNotFoundException_ForNonExistentQuery()
         {
             // Arrange
@@ -88,7 +90,7 @@ namespace WebCLI.Core.Tests.Repositories
             mockQueryCriteria.SetupGet(c => c.Identifier).Returns(nonExistentQuery);
 
             // Act & Assert
-            Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => repository[mockQueryCriteria.Object]);
+            Assert.ThrowsException<KeyNotFoundException>(() => repository[mockQueryCriteria.Object]);
         }
     }
 }
