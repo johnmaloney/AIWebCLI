@@ -1,7 +1,8 @@
-using Xunit;
+
 using WebCLI.Core;
 using System.IO;
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace WebCLI.Core.Tests.Extensions
 {
@@ -23,7 +24,7 @@ namespace WebCLI.Core.Tests.Extensions
             }
         }
 
-        [Fact]
+        [TestMethod]
         public void IsDirectoryPath_ReturnsTrue_ForExistingDirectory()
         {
             // Arrange
@@ -34,10 +35,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = testDirPath.IsDirectoryPath();
 
             // Assert
-            Assert.True(result);
+            Assert.IsTrue(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void IsDirectoryPath_ReturnsFalse_ForExistingFile()
         {
             // Arrange
@@ -48,10 +49,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = testFilePath.IsDirectoryPath();
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void IsDirectoryPath_ReturnsTrue_ForNonExistentPath_WithoutExtension()
         {
             // Arrange
@@ -61,10 +62,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = nonExistentDirPath.IsDirectoryPath();
 
             // Assert
-            Assert.True(result);
+            Assert.IsTrue(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void IsDirectoryPath_ReturnsFalse_ForNonExistentPath_WithExtension()
         {
             // Arrange
@@ -74,23 +75,23 @@ namespace WebCLI.Core.Tests.Extensions
             var result = nonExistentFilePath.IsDirectoryPath();
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow(" ")]
         public void IsDirectoryPath_ReturnsFalse_ForNullEmptyOrWhitespacePath(string path)
         {
             // Act
             var result = path.IsDirectoryPath();
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void IsDirectoryPath_ReturnsFalse_ForExistingFile_EvenIfNoExtensionInPath()
         {
             // Arrange
@@ -101,7 +102,7 @@ namespace WebCLI.Core.Tests.Extensions
             var result = testFilePath.IsDirectoryPath();
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
     }
 }

@@ -2,12 +2,13 @@ using System.Threading.Tasks;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Pipes;
 using WebCLI.Core.Models;
+using System.Collections.Generic;
 
 namespace WebCLI.Core.Pipes
 {
     public class ExampleUserCreationPipe : APipe
     {
-        public override async Task<ICommandResult> Handle(IPipeContext context)
+        public override async Task<ICommandResult> Handle(IContext context)
         {
             if (context is GeneralContext generalContext && generalContext.Command != null)
             {

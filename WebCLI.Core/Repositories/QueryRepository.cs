@@ -17,7 +17,7 @@ namespace WebCLI.Core.Repositories
         {
             get
             {
-                return this.queryActions[criteria.Identifier.ToLowerInvariant()](criteria);
+                return this.queryActions[criteria.Name.ToLowerInvariant()](criteria);
             }
         }
 

@@ -7,7 +7,7 @@ namespace WebCLI.Core.Pipes
 {
     public class ExampleAuthPipe : APipe
     {
-        public override async Task<ICommandResult> Handle(IPipeContext context)
+        public override async Task<ICommandResult> Handle(IContext context)
         {
             if (context is GeneralContext generalContext && generalContext.Command != null)
             {

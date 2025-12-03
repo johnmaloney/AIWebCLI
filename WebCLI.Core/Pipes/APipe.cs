@@ -14,7 +14,7 @@ namespace WebCLI.Core.Pipes
             return nextPipe;
         }
 
-        public virtual async Task<ICommandResult> Handle(IPipeContext context)
+        public virtual async Task<ICommandResult> Handle(IContext context)
         {
             if (_nextPipe != null)
             {
