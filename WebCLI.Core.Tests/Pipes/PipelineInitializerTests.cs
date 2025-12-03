@@ -1,4 +1,4 @@
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Pipes;
@@ -7,19 +7,20 @@ using System.Collections.Generic;
 
 namespace WebCLI.Core.Tests.Pipes
 {
+    [TestClass]
     public class PipelineInitializerTests
     {
-        [Fact]
+        [TestMethod]
         public void PipelineInitializer_CanBeInstantiated()
         {
             // Arrange & Act
             var initializer = new PipelineInitializer();
 
             // Assert
-            Assert.NotNull(initializer);
+            Assert.IsNotNull(initializer);
         }
 
-        [Fact]
+        [TestMethod]
         public void PipeInitializer_CanBeSetAndGet()
         {
             // Arrange
@@ -31,11 +32,11 @@ namespace WebCLI.Core.Tests.Pipes
             initializer.PipeInitializer = pipeFunc;
 
             // Assert
-            Assert.Equal(pipeFunc, initializer.PipeInitializer);
-            Assert.Equal(mockPipe.Object, initializer.PipeInitializer());
+            Assert.AreEqual(pipeFunc, initializer.PipeInitializer);
+            Assert.AreEqual(mockPipe.Object, initializer.PipeInitializer());
         }
 
-        [Fact]
+        [TestMethod]
         public void ContextInitializer_CanBeSetAndGet()
         {
             // Arrange
@@ -48,8 +49,8 @@ namespace WebCLI.Core.Tests.Pipes
             initializer.ContextInitializer = contextFunc;
 
             // Assert
-            Assert.Equal(contextFunc, initializer.ContextInitializer);
-            Assert.Equal(mockContext.Object, initializer.ContextInitializer("test", null, null, null));
+            Assert.AreEqual(contextFunc, initializer.ContextInitializer);
+            Assert.AreEqual(mockContext.Object, initializer.ContextInitializer("test", null, null, null));
         }
     }
 }
