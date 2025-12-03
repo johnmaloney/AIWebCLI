@@ -24,7 +24,7 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 
     public class AnotherTestPipeContext : APipeContext { /* ... */ }
 
-    public class NonPipeContextClass : IContext { /* Added IContext for testing */ }
+    public class NonPipeContextClass : IContext { /* ... */ }
 }
 
 namespace WebCLI.Core.Tests.Pipes
