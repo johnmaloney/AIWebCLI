@@ -1,4 +1,4 @@
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Models.Definitions;
@@ -24,25 +24,25 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 
     public class AnotherTestPipeContext : APipeContext { /* ... */ }
 
-    public class NonPipeContextClass { /* ... */ }
+    public class NonPipeContextClass : IContext { /* Added IContext for testing */ }
 }
 
 namespace WebCLI.Core.Tests.Pipes
 {
     using WebCLI.Core.Tests.Pipes.TestDoubles; // Alias for test doubles namespace
 
-    [TestFixture]
+    [TestClass]
     public class ReflectionPipelineFactoryTests
     {
         private ReflectionPipelineFactory _factory;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUp()
         {
             _factory = new ReflectionPipelineFactory();
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldCreateInstanceSuccessfully_WhenTypeAndAssemblyAreValid()
         {
             // Arrange
@@ -57,10 +57,10 @@ namespace WebCLI.Core.Tests.Pipes
 
             // Assert
             Assert.IsNotNull(pipe);
-            Assert.IsInstanceOf<TestPipe>(pipe);
+            Assert.IsInstanceOfType(pipe, typeof(TestPipe));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldCreateInstanceSuccessfully_WhenOnlyTypeIsValidAndInLoadedAssemblies()
         {
             // Arrange
@@ -75,30 +75,30 @@ namespace WebCLI.Core.Tests.Pipes
 
             // Assert
             Assert.IsNotNull(pipe);
-            Assert.IsInstanceOf<AnotherTestPipe>(pipe);
+            Assert.IsInstanceOfType(pipe, typeof(AnotherTestPipe));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldThrowArgumentNullException_WhenConfigIsNull()
         {
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => _factory.CreatePipe(null));
+            Assert.ThrowsException<ArgumentNullException>(() => _factory.CreatePipe(null));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldThrowArgumentException_WhenPipeTypeIsNullOrEmpty()
         {
             // Arrange
             var config = new PipeConfiguration { Type = null };
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _factory.CreatePipe(config));
+            Assert.ThrowsException<ArgumentException>(() => _factory.CreatePipe(config));
 
             config.Type = " ";
-            Assert.Throws<ArgumentException>(() => _factory.CreatePipe(config));
+            Assert.ThrowsException<ArgumentException>(() => _factory.CreatePipe(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldThrowInvalidOperationException_WhenPipeTypeNotFound()
         {
             // Arrange
@@ -109,10 +109,10 @@ namespace WebCLI.Core.Tests.Pipes
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _factory.CreatePipe(config));
+            Assert.ThrowsException<InvalidOperationException>(() => _factory.CreatePipe(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldThrowInvalidOperationException_WhenTypeDoesNotImplementIPipe()
         {
             // Arrange
@@ -123,24 +123,24 @@ namespace WebCLI.Core.Tests.Pipes
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _factory.CreatePipe(config));
+            Assert.ThrowsException<InvalidOperationException>(() => _factory.CreatePipe(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipe_ShouldThrowInvalidOperationException_WhenAssemblyNotFound()
         {
             // Arrange
             var config = new PipeConfiguration
             {
                 Type = typeof(TestPipe).FullName,
-                Assembly = "NonExistentAssembly"
+                Assembly = "NonExistentAssembly" 
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _factory.CreatePipe(config));
+            Assert.ThrowsException<InvalidOperationException>(() => _factory.CreatePipe(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldCreateInstanceSuccessfully_WhenContextTypeAndAssemblyAreValid()
         {
             // Arrange
@@ -155,10 +155,10 @@ namespace WebCLI.Core.Tests.Pipes
 
             // Assert
             Assert.IsNotNull(context);
-            Assert.IsInstanceOf<TestPipeContext>(context);
+            Assert.IsInstanceOfType(context, typeof(TestPipeContext));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldCreateInstanceSuccessfully_WhenOnlyContextTypeIsValidAndInLoadedAssemblies()
         {
             // Arrange
@@ -173,30 +173,30 @@ namespace WebCLI.Core.Tests.Pipes
 
             // Assert
             Assert.IsNotNull(context);
-            Assert.IsInstanceOf<AnotherTestPipeContext>(context);
+            Assert.IsInstanceOfType(context, typeof(AnotherTestPipeContext));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldThrowArgumentNullException_WhenConfigIsNull()
         {
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => _factory.CreatePipeContext(null));
+            Assert.ThrowsException<ArgumentNullException>(() => _factory.CreatePipeContext(null));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldThrowArgumentException_WhenContextTypeIsNullOrEmpty()
         {
             // Arrange
             var config = new PipeConfiguration { ContextType = null };
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _factory.CreatePipeContext(config));
+            Assert.ThrowsException<ArgumentException>(() => _factory.CreatePipeContext(config));
 
             config.ContextType = " ";
-            Assert.Throws<ArgumentException>(() => _factory.CreatePipeContext(config));
+            Assert.ThrowsException<ArgumentException>(() => _factory.CreatePipeContext(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldThrowInvalidOperationException_WhenContextTypeNotFound()
         {
             // Arrange
@@ -207,10 +207,10 @@ namespace WebCLI.Core.Tests.Pipes
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _factory.CreatePipeContext(config));
+            Assert.ThrowsException<InvalidOperationException>(() => _factory.CreatePipeContext(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldThrowInvalidOperationException_WhenTypeDoesNotImplementIPipeContext()
         {
             // Arrange
@@ -221,10 +221,10 @@ namespace WebCLI.Core.Tests.Pipes
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _factory.CreatePipeContext(config));
+            Assert.ThrowsException<InvalidOperationException>(() => _factory.CreatePipeContext(config));
         }
 
-        [Test]
+        [TestMethod]
         public void CreatePipeContext_ShouldThrowInvalidOperationException_WhenAssemblyNotFound()
         {
             // Arrange
@@ -235,7 +235,7 @@ namespace WebCLI.Core.Tests.Pipes
             };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => _factory.CreatePipeContext(config));
+            Assert.ThrowsException<InvalidOperationException>(() => _factory.CreatePipeContext(config));
         }
     }
 }
