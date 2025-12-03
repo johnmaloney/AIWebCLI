@@ -10,7 +10,7 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 {
     public class TestPipe : APipe
     {
-        public override async System.Threading.Tasks.Task<ICommandResult> Handle(IPipeContext context)
+        public override async System.Threading.Tasks.Task<ICommandResult> Handle(APipeContext context)
         {
             return await base.Handle(context);
         }
