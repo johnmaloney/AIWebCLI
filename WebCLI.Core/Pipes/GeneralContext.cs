@@ -15,6 +15,11 @@ namespace WebCLI.Core.Pipes
             // Initialize with a default logger or inject one
             Logger = new ConsoleLogger(); 
         }
+
+        public override void AddMessage(params string[] messages)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     // Simple console logger for demonstration

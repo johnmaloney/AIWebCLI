@@ -1,39 +1,40 @@
-using Xunit;
+
 using WebCLI.Core;
 using System;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace WebCLI.Core.Tests.Extensions
 {
     public class StringExtensionsTests
     {
-        [Theory]
-        [InlineData("p:password", ":", "password")]
-        [InlineData("key-value", "-", "value")]
-        [InlineData("no:split", ":", "split")]
+        [TestMethod]
+        [DataRow("p:password", ":", "password")]
+        [DataRow("key-value", "-", "value")]
+        [DataRow("no:split", ":", "split")]
         public void RightSideOf_ReturnsCorrectString(string value, string splitCharacter, string expected)
         {
             // Act
             var result = value.RightSideOf(splitCharacter);
 
             // Assert
-            Assert.Equal(expected, result);
+            Assert.AreEqual(expected, result);
         }
 
-        [Theory]
-        [InlineData("p:password", ":", "p")]
-        [InlineData("key-value", "-", "key")]
-        [InlineData("no:split", ":", "no")]
+        [TestMethod]
+        [DataRow("p:password", ":", "p")]
+        [DataRow("key-value", "-", "key")]
+        [DataRow("no:split", ":", "no")]
         public void LeftSideOf_ReturnsCorrectString(string value, string splitCharacter, string expected)
         {
             // Act
             var result = value.LeftSideOf(splitCharacter);
 
             // Assert
-            Assert.Equal(expected, result);
+            Assert.AreEqual(expected, result);
         }
 
-        [Fact]
+        [TestMethod]
         public void Has_ReturnsTrue_WhenKeyExists()
         {
             // Arrange
@@ -43,10 +44,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.Has(item, "node1");
 
             // Assert
-            Assert.True(result);
+            Assert.IsTrue(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void Has_ReturnsFalse_WhenKeyDoesNotExist()
         {
             // Arrange
@@ -56,10 +57,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.Has(item, "node2");
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void Has_ReturnsFalse_WhenItemIsNull()
         {
             // Arrange
@@ -69,12 +70,12 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.Has(item, "node1");
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
         public void Has_ReturnsFalse_WhenNodeNameIsNullOrEmpty(string nodeName)
         {
             // Arrange
@@ -84,10 +85,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.Has(item, nodeName);
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void HasCollection_ReturnsFalse_WhenItemIsNull()
         {
             // Arrange
@@ -97,10 +98,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.HasCollection(item, 0);
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void HasCollection_ReturnsFalse_WhenLocationIsOutOfRange()
         {
             // Arrange
@@ -110,10 +111,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.HasCollection(item, 2);
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void HasCollection_ReturnsFalse_WhenItemAtLocationIsNull()
         {
             // Arrange
@@ -123,10 +124,10 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.HasCollection(item, 1);
 
             // Assert
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public void HasCollection_ReturnsTrue_WhenItemAtLocationIsNotNull()
         {
             // Arrange
@@ -136,7 +137,7 @@ namespace WebCLI.Core.Tests.Extensions
             var result = StringExtensions.HasCollection(item, 1);
 
             // Assert
-            Assert.True(result);
+            Assert.IsTrue(result);
         }
     }
 }

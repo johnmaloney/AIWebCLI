@@ -10,7 +10,7 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 {
     public class TestPipe : APipe
     {
-        public override async System.Threading.Tasks.Task<ICommandResult> Handle(APipeContext context)
+        public override async System.Threading.Tasks.Task<ICommandResult> Handle(IContext context)
         {
             return await base.Handle(context);
         }
@@ -20,11 +20,29 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 
     public class NonPipeClass { /* ... */ }
 
-    public class TestPipeContext : APipeContext { /* ... */ }
+    public class TestPipeContext : APipeContext
+    {
+        public override void AddMessage(params string[] messages)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
-    public class AnotherTestPipeContext : APipeContext { /* ... */ }
+    public class AnotherTestPipeContext : APipeContext
+    {
+        public override void AddMessage(params string[] messages)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
-    public class NonPipeContextClass : IContext { /* ... */ }
+    public class NonPipeContextClass : APipeContext
+    {
+        public override void AddMessage(params string[] messages)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
 namespace WebCLI.Core.Tests.Pipes

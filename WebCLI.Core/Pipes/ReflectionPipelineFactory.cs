@@ -21,7 +21,7 @@ namespace WebCLI.Core.Pipes
             return (IPipe)Activator.CreateInstance(pipeType);
         }
 
-        public IPipeContext CreatePipeContext(PipeConfiguration pipeConfiguration)
+        public IContext CreatePipeContext(PipeConfiguration pipeConfiguration)
         {
             if (pipeConfiguration == null) throw new ArgumentNullException(nameof(pipeConfiguration));
             if (string.IsNullOrWhiteSpace(pipeConfiguration.ContextType)) throw new ArgumentException("Pipe ContextType cannot be null or empty.", nameof(pipeConfiguration));
@@ -29,9 +29,9 @@ namespace WebCLI.Core.Pipes
             Type contextType = GetTypeFromConfiguration(pipeConfiguration, useContextType: true);
 
             if (contextType == null) throw new InvalidOperationException($"Could not find pipe context type '{pipeConfiguration.ContextType}'.");
-            if (!typeof(IPipeContext).IsAssignableFrom(contextType)) throw new InvalidOperationException($"Type '{pipeConfiguration.ContextType}' does not implement IPipeContext.");
+            if (!typeof(IContext).IsAssignableFrom(contextType)) throw new InvalidOperationException($"Type '{pipeConfiguration.ContextType}' does not implement IPipeContext.");
 
-            return (IPipeContext)Activator.CreateInstance(contextType);
+            return (IContext)Activator.CreateInstance(contextType);
         }
 
         private Type GetTypeFromConfiguration(PipeConfiguration pipeConfiguration, bool useContextType = false)

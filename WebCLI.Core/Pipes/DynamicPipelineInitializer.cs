@@ -62,7 +62,7 @@ namespace WebCLI.Core.Pipes
 
             APipe firstPipe = null;
             APipe currentPipe = null;
-            APipeContext initialContext = null;
+            IContext initialContext = null;
 
             foreach (var pipeConfig in definition.Pipes)
             {
@@ -100,7 +100,7 @@ namespace WebCLI.Core.Pipes
 
             APipe firstPipe = null;
             APipe currentPipe = null;
-            APipeContext initialContext = null;
+            IContext initialContext = null;
 
             foreach (var pipeConfig in definition.Pipes)
             {
