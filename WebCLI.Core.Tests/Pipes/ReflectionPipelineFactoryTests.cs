@@ -26,7 +26,7 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 
     public class NonPipeClass { /* ... */ }
 
-    public class TestPipeContext : APipeContext, IPipeContext
+    public class TestPipeContext : APipeContext, IContext
     {
         public override void AddMessage(params string[] messages)
         {
@@ -34,7 +34,7 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
         }
     }
 
-    public class AnotherTestPipeContext : APipeContext, IPipeContext
+    public class AnotherTestPipeContext : APipeContext, IContext
     {
         public override void AddMessage(params string[] messages)
         {
@@ -44,7 +44,7 @@ namespace WebCLI.Core.Tests.Pipes.TestDoubles
 
     public class NonPipeContextClass  // Removed IPipeContext implementation
     {
-        // This class intentionally does not implement IPipeContext
+        // This class intentionally does not implement IContext
         // to test the exception throwing for invalid context types.
     }
 }
