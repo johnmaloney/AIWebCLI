@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using WebCLI.Core.Models.Definitions;
 using WebCLI.Core.Repositories;
+using Newtonsoft.Json;
 
 namespace WebCLI.Core.Tests.Repositories
 {
@@ -127,7 +128,7 @@ namespace WebCLI.Core.Tests.Repositories
         {
             // Arrange
             CreatePipelineFile("valid.json", "{\"Name\":\"ValidCommand\", \"Description\":\"Desc\", \"Type\":\"Command\", \"Pipes\":[]}");
-            CreatePipelineFile("invalid.json", "{This is not valid JSON}");
+            CreatePipelineFile("invalid.json", "{ \"Name\": \"InvalidCommand\", \"Description\": \"Desc\", \"Type\": \"Command\", \"Pipes\": [ { \"Type\": \"InvalidPipe\", \"Assembly\": \"InvalidAssembly\" } \"extra_content\" ] }"); // Malformed JSON
             var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
 
             // Act
