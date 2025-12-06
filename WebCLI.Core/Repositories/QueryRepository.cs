@@ -32,7 +32,7 @@ namespace WebCLI.Core.Repositories
 
         public void AddQueryDelegate(string queryName, Func<IQueryCriteria, IQueryResult> actionDelegate)
         {
-            queryActions.AddOrUpdate(queryName, actionDelegate, (cmdName, action) => action = actionDelegate);
+            queryActions.AddOrUpdate(queryName, actionDelegate, (cmdName, action) => actionDelegate);
         }
 
         #endregion

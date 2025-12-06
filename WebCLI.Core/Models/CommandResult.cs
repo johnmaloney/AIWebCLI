@@ -5,15 +5,17 @@ namespace WebCLI.Core.Models
 {
     public class CommandResult : ICommandResult
     {
-        public bool IsSuccessful { get; set; }
-        public string Message { get; set; }
-        public Dictionary<string, object> Data { get; set; }
+        public bool Success { get; set; }
+        public List<string> Messages { get; set; }
+        public object Response { get; set; }
+        public string ResponseType { get; set; }
 
-        public CommandResult(bool isSuccessful, string message, Dictionary<string, object> data = null)
+        public CommandResult(bool success, string message, object response = null, string responseType = "text")
         {
-            IsSuccessful = isSuccessful;
-            Message = message;
-            Data = data ?? new Dictionary<string, object>();
+            Success = success;
+            Messages = new List<string> { message };
+            Response = response;
+            ResponseType = responseType;
         }
     }
 }

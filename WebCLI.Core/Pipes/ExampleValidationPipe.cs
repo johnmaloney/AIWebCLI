@@ -13,8 +13,8 @@ namespace WebCLI.Core.Pipes
             if (context is GeneralContext generalContext && generalContext.Command != null)
             {
                 // Placeholder for actual validation logic
-                if (generalContext.Command.Criteria.GetValueOrDefault("username") == null ||
-                    string.IsNullOrWhiteSpace(generalContext.Command.Criteria["username"])) {
+                if (generalContext.Command.Options.GetValueOrDefault("username") == null ||
+                    string.IsNullOrWhiteSpace(generalContext.Command.Options["username"])) {
                     return new CommandResult(false, "Validation failed: Username is required.");
                 }
                 // Simulate successful validation

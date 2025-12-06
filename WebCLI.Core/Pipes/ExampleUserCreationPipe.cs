@@ -13,7 +13,7 @@ namespace WebCLI.Core.Pipes
             if (context is GeneralContext generalContext && generalContext.Command != null)
             {
                 // Placeholder for actual user creation logic
-                string username = generalContext.Command.Criteria.GetValueOrDefault("username");
+                string username = generalContext.Command.Options.GetValueOrDefault("username");
                 // In a real scenario, interact with a UserRepository to create the user
                 generalContext.Logger.Log($"User '{username}' created successfully (simulated).");
                 return new CommandResult(true, $"User '{username}' created successfully.");
