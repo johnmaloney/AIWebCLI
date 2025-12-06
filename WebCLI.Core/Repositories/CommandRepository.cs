@@ -40,7 +40,7 @@ namespace WebCLI.Core.Repositories
         {
             commandActions.AddOrUpdate(
                 identifier.ToLowerInvariant(), actionDelegate, 
-                (cmdName, action) => action = actionDelegate);
+                (cmdName, action) => actionDelegate);
 
             if (initializer != null)
             {
