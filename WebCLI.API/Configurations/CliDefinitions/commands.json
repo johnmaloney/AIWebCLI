@@ -1,0 +1,8 @@
+[
+  {
+    "Name": "sql-exec",
+    "Description": "Executes a SQL query against the database.",
+    "Parameters": [ "query" ],
+    "Type": "WebCLI.Core.Commands.SqlExecutorCommand, WebCLI.Core"
+  }
+]
