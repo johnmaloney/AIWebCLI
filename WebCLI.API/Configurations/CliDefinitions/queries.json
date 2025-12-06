@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "get-docs",
+    "Description": "Retrieves documentation for all available commands and queries.",
+    "Parameters": [],
+    "Type": "WebCLI.Core.Queries.GetDocumentationQuery, WebCLI.Core"
+  },
+  {
+    "Name": "list-environments",
+    "Description": "Lists all configured environments.",
+    "Parameters": [],
+    "Type": "WebCLI.Core.Queries.ListEnvironmentsQuery, WebCLI.Core"
+  }
+]
