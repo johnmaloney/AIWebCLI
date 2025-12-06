@@ -60,13 +60,13 @@ namespace WebCLI.Core.Pipes
         {
             if (!definition.Pipes.Any()) return new CommandResult(true, "Command pipeline executed with no pipes.");
 
-            APipe firstPipe = null;
-            APipe currentPipe = null;
+            IPipe firstPipe = null;
+            IPipe currentPipe = null;
             IContext initialContext = null;
 
             foreach (var pipeConfig in definition.Pipes)
             {
-                var pipe = (APipe)_pipelineFactory.CreatePipe(pipeConfig);
+                var pipe = _pipelineFactory.CreatePipe(pipeConfig);
                 var context = _pipelineFactory.CreatePipeContext(pipeConfig);
 
                 if (firstPipe == null)
@@ -76,7 +76,7 @@ namespace WebCLI.Core.Pipes
                 }
                 else
                 {
-                    currentPipe.SetNext(pipe);
+                    currentPipe.ExtendWith(pipe);
                 }
                 currentPipe = pipe;
             }
@@ -89,22 +89,23 @@ namespace WebCLI.Core.Pipes
                 // You might need to add properties to GeneralContext or create specific contexts
             }
 
-            var result = await firstPipe.Handle(initialContext);
+            // Execute the pipeline using the Process method
+            await firstPipe.Process(initialContext);
 
-            return result as ICommandResult; // Assuming all pipes return ICommandResult or a derivative
+            return initialContext as ICommandResult; // Assuming the result is stored in the context
         }
 
          private async Task<IQueryResult> BuildAndExecutePipeline(PipelineDefinition definition, Query query)
         {
             if (!definition.Pipes.Any()) return new QueryResult(true, "Query pipeline executed with no pipes.", null);
 
-            APipe firstPipe = null;
-            APipe currentPipe = null;
+            IPipe firstPipe = null;
+            IPipe currentPipe = null;
             IContext initialContext = null;
 
             foreach (var pipeConfig in definition.Pipes)
             {
-                var pipe = (APipe)_pipelineFactory.CreatePipe(pipeConfig);
+                var pipe = _pipelineFactory.CreatePipe(pipeConfig);
                 var context = _pipelineFactory.CreatePipeContext(pipeConfig);
 
                 if (firstPipe == null)
@@ -114,7 +115,7 @@ namespace WebCLI.Core.Pipes
                 }
                 else
                 {
-                    currentPipe.SetNext(pipe);
+                    currentPipe.ExtendWith(pipe);
                 };
                 currentPipe = pipe;
             }
@@ -127,9 +128,10 @@ namespace WebCLI.Core.Pipes
                 // You might need to add properties to GeneralContext or create specific contexts
             }
 
-            var result = await firstPipe.Handle(initialContext);
+            // Execute the pipeline using the Process method
+            await firstPipe.Process(initialContext);
 
-            return result as IQueryResult; // Assuming all pipes return IQueryResult or a derivative
+            return initialContext as IQueryResult; // Assuming the result is stored in the context
         }
     }
 }
