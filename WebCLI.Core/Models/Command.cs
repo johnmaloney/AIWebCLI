@@ -6,13 +6,13 @@ namespace WebCLI.Core.Models
     public class Command : ICommandCriteria
     {
         public string Name { get; set; }
-        public Dictionary<string, string> Criteria { get; set; }
+        public Dictionary<string, string> Options { get; set; }
         public IAuthContext UserContext { get; set; }
 
-        public Command(string name, Dictionary<string, string> criteria = null, IAuthContext userContext = null)
+        public Command(string name, Dictionary<string, string> options = null, IAuthContext userContext = null)
         {
             Name = name;
-            Criteria = criteria ?? new Dictionary<string, string>();
+            Options = options ?? new Dictionary<string, string>();
             UserContext = userContext;
         }
     }
