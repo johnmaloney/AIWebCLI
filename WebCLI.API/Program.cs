@@ -1,11 +1,8 @@
-using WebCLI.Core.Contracts;
-using WebCLI.Core.Repositories;
-using WebCLI.Core.Pipes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using WebCLI.Core.Contracts;
+using WebCLI.Core.Pipes;
+using WebCLI.Core.Repositories;
 
 namespace WebCLI.API
 {
