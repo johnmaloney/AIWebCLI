@@ -1,12 +1,12 @@
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebCLI.Core;
 
 namespace WebCLI.Core.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class TestReflectableClassTests
     {
-        [Test]
+        [TestMethod]
         public void Constructor_ShouldInitializeMessageToDefault()
         {
             // Arrange & Act
@@ -16,7 +16,7 @@ namespace WebCLI.Core.Tests
             Assert.AreEqual("Default Message", instance.Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Message_SetAndGet_ShouldWorkCorrectly()
         {
             // Arrange
