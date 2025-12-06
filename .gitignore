@@ -7,10 +7,11 @@
 
 # Visual Studio
 .vs/
-/bin/
-/obj/
+*/bin/
+*/obj/
 /WebCLI.Core/bin/
 /WebCLI.Core/obj/
 /WebCLI.Core.Tests/bin/
 /WebCLI.Core.Tests/obj/
 /TestResults/
+
