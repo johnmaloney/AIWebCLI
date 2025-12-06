@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using System.Reflection; // Added for XML documentation
+using System.Reflection;
+using System.IO; // Added for Path.Combine
 
 namespace WebCLI.API
 {
@@ -34,7 +35,6 @@ namespace WebCLI.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                // using System.Reflection;
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
@@ -57,12 +57,25 @@ namespace WebCLI.API
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage(); // Good practice for development
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "WebCLI.API v1");
+                    options.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+                });
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+            // app.UseStaticFiles(); // Added as a diagnostic step if static files aren't loading correctly
 
+            app.UseRouting(); // Ensure UseRouting is before UseAuthorization
             app.UseAuthorization();
 
             app.MapControllers();
