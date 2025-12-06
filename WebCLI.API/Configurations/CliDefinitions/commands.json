@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "sql-exec",
+    "Description": "Executes a SQL query against the database.",
+    "Parameters": [ "query" ],
+    "Type": "WebCLI.Core.Commands.SqlExecutorCommand, WebCLI.Core"
+  },
+  {
+    "Name": "create-example-user",
+    "Description": "Creates an example user using the core example pipes.",
+    "Parameters": [ "username", "password" ],
+    "Type": "WebCLI.Core.Commands.CreateExampleUserCommand, WebCLI.Core"
+  }
+]
