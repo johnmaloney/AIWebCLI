@@ -1,0 +1,8 @@
+[
+  {
+    "Name": "get-docs",
+    "Description": "Retrieves documentation for all available commands and queries.",
+    "Parameters": [],
+    "Type": "WebCLI.Core.Queries.GetDocumentationQuery, WebCLI.Core"
+  }
+]
