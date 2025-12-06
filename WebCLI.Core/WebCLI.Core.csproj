@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,26 @@
     <Folder Include="Models\Definitions\" />
     <Folder Include="Pipes\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Commands\" />
+    <Folder Include="Queries\" />
+    <Folder Include="Documentation\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\SqlExecutorCommand.cs" />
+    <Compile Include="Commands\CommandFactory.cs" />
+    <Compile Include="Queries\IQuery.cs" />
+    <Compile Include="Queries\GetDocumentationQuery.cs" />
+    <Compile Include="Queries\QueryFactory.cs" />
+    <Compile Include="Documentation\CommandDocumentation.cs" />
+    <Compile Include="Documentation\QueryDocumentation.cs" />
+    <Compile Include="Contracts\ICommandDefinitionRepository.cs" />
+    <Compile Include="Contracts\IQueryDefinitionRepository.cs" />
+    <Compile Include="Models\CommandDefinition.cs" />
+    <Compile Include="Models\QueryDefinition.cs" />
+    <Compile Include="Repositories\JsonFileCommandDefinitionRepository.cs" />
+    <Compile Include="Repositories\JsonFileQueryDefinitionRepository.cs" />
   </ItemGroup>
 
 </Project>
