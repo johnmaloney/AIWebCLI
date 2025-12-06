@@ -18,6 +18,10 @@ namespace WebCLI.Core
         public static string RightSideOf(this string value, string splitCharacter)
         {
             var values = value.Split(new[] { splitCharacter }, StringSplitOptions.None);
+            if (values.Length <= 1)
+            {
+                throw new InvalidOperationException($"The split character '{splitCharacter}' was not found in the string.");
+            }
             return string.Join(splitCharacter, values.Skip(1));
         }
 
