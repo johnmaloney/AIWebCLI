@@ -44,8 +44,14 @@ namespace WebCLI.Core
             if (item == null) return false;
             if (string.IsNullOrEmpty(nodeName)) return false;
 
-            if (!item.ContainsKey(nodeName)) return false;
-            return true;
+            // Safely cast to IDictionary<string, object> to check for ContainsKey
+            if (item is IDictionary<string, object> dictionaryItem)
+            {
+                return dictionaryItem.ContainsKey(nodeName);
+            }
+            
+            // If it's not a dictionary-like dynamic object, assume it doesn't have the node
+            return false;
         }
 
 
