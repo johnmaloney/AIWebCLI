@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using WebCLI.Core.Contracts;
-using WebCLI.Core.Models;
+using WebCLI.Core.Commands;
+using WebCLI.Core.Queries;
 using WebCLI.API.Models;
 using System.Dynamic;
-using System.Linq; // Added for ToDictionary
+using System.Linq;
+using WebCLI.Core.Documentation;
+using System.Collections.Generic;
 
 namespace WebCLI.API.Controllers
 {
@@ -12,15 +14,17 @@ namespace WebCLI.API.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class CliController : ControllerBase
     {
-        private readonly IPipelineInitializer _pipelineInitializer;
+        private readonly CommandFactory _commandFactory;
+        private readonly QueryFactory _queryFactory;
 
-        public CliController(IPipelineInitializer pipelineInitializer)
+        public CliController(CommandFactory commandFactory, QueryFactory queryFactory)
         {
-            _pipelineInitializer = pipelineInitializer;
+            _commandFactory = commandFactory;
+            _queryFactory = queryFactory;
         }
 
         [HttpPost("execute")]
-        public async Task<IActionResult> ExecuteCommand([FromBody] CliCommandRequest request)
+        public async Task<IActionResult> Execute([FromBody] CliCommandRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.CommandName))
             {
@@ -28,30 +32,44 @@ namespace WebCLI.API.Controllers
                 { Success = false, Message = "CommandName cannot be empty.", ResponseType = "text" });
             }
 
-            // Determine if it's a Command or Query based on definition (requires repository lookup)
-            // For now, let's assume all are commands unless explicitly a query
-            // This logic will need refinement based on how PipelineDefinition.Type is used
-
-            // Attempt to execute as a Command
-            var command = new Command(
-                request.CommandName,
-                request.Parameters?.ToDictionary(p => p.Key, p => p.Value?.ToString()));
-
-            var commandResult = await _pipelineInitializer.ExecuteCommandPipeline(command);
-
-            if (commandResult != null)
+            try
             {
-                return Ok(new CliCommandResponse
+                if (_commandFactory.GetCommandDocumentation().Any(c => c.Name == request.CommandName))
                 {
-                    Success = commandResult.Success,
-                    Message = string.Join(Environment.NewLine, commandResult.Messages),
-                    Data = commandResult.Response,
-                    ResponseType = commandResult.ResponseType ?? "text"
-                });
+                    var command = _commandFactory.GetCommand(request.CommandName);
+                    var result = await command.ExecuteAsync(request.Parameters?.ToDictionary(p => p.Key, p => p.Value?.ToString()));
+                    return Ok(new CliCommandResponse { Success = true, Message = result, ResponseType = "text" });
+                }
+                else if (_queryFactory.GetQueryDocumentation().Any(q => q.Name == request.CommandName))
+                {
+                    var query = _queryFactory.GetQuery(request.CommandName);
+                    var result = await query.ExecuteAsync(request.Parameters?.ToDictionary(p => p.Key, p => p.Value?.ToString()));
+                    return Ok(new CliCommandResponse { Success = true, Message = result, ResponseType = "text" });
+                }
+                else
+                {
+                    return NotFound(new CliCommandResponse { Success = false, Message = $"Unknown command or query: {request.CommandName}", ResponseType = "text" });
+                }
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new CliCommandResponse { Success = false, Message = ex.Message, ResponseType = "text" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new CliCommandResponse { Success = false, Message = $"An unexpected error occurred: {ex.Message}", ResponseType = "text" });
+            }
+        }
 
-            return StatusCode(500, new CliCommandResponse
-            { Success = false, Message = "An unexpected error occurred.", ResponseType = "text" });
+        [HttpGet("list")]
+        public IActionResult ListCommandsAndQueries()
+        {
+            var response = new ListCommandsAndQueriesResponse
+            {
+                Commands = _commandFactory.GetCommandDocumentation().ToList(),
+                Queries = _queryFactory.GetQueryDocumentation().ToList()
+            };
+            return Ok(response);
         }
     }
 }
