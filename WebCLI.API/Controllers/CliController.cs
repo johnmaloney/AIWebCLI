@@ -32,11 +32,7 @@ namespace WebCLI.API.Controllers
             // This logic will need refinement based on how PipelineDefinition.Type is used
 
             // Attempt to execute as a Command
-            var command = new Command(request.CommandName);
-            foreach (var param in request.Parameters)
-            { 
-                command.Options.Add(param.Key, param.Value);
-            }
+            var command = new Command(request.CommandName, request.Parameters);
 
             var commandResult = await _pipelineInitializer.ExecuteCommandPipeline(command);
 
