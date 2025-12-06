@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Pipes;
 using WebCLI.Core.Repositories;
+using WebCLI.Core.Commands;
+using WebCLI.Core.Queries;
 
 namespace WebCLI.API
 {
@@ -42,6 +44,30 @@ namespace WebCLI.API
             });
             builder.Services.AddSingleton<IPipelineFactory, ReflectionPipelineFactory>();
             builder.Services.AddSingleton<IPipelineInitializer, DynamicPipelineInitializer>();
+
+            // CLI Command and Query Definitions
+            builder.Services.AddSingleton<ICommandDefinitionRepository>(sp =>
+            {
+                var commandDefinitionPath = builder.Configuration["CommandDefinitionPath"];
+                if (string.IsNullOrEmpty(commandDefinitionPath))
+                {
+                    throw new InvalidOperationException("CommandDefinitionPath configuration is missing.");
+                }
+                return new JsonFileCommandDefinitionRepository(commandDefinitionPath);
+            });
+
+            builder.Services.AddSingleton<IQueryDefinitionRepository>(sp =>
+            {
+                var queryDefinitionPath = builder.Configuration["QueryDefinitionPath"];
+                if (string.IsNullOrEmpty(queryDefinitionPath))
+                {
+                    throw new InvalidOperationException("QueryDefinitionPath configuration is missing.");
+                }
+                return new JsonFileQueryDefinitionRepository(queryDefinitionPath);
+            });
+
+            builder.Services.AddSingleton<CommandFactory>();
+            builder.Services.AddSingleton<QueryFactory>();
 
             var app = builder.Build();
 
