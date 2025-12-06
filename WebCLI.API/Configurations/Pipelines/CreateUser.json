@@ -1,0 +1,28 @@
+{
+  "Name": "CreateUser",
+  "Description": "Creates a new user in the system with specified roles.",
+  "Type": "Command",
+  "Pipes": [
+    {
+      "Type": "WebCLI.Core.Pipes.ExampleAuthPipe",
+      "Assembly": "WebCLI.Core",
+      "ContextType": "WebCLI.Core.Pipes.GeneralContext"
+    },
+    {
+      "Type": "WebCLI.Core.Pipes.ExampleValidationPipe",
+      "Assembly": "WebCLI.Core",
+      "ContextType": "WebCLI.Core.Pipes.GeneralContext"
+    },
+    {
+      "Type": "WebCLI.Core.Pipes.ExampleUserCreationPipe",
+      "Assembly": "WebCLI.Core",
+      "ContextType": "WebCLI.Core.Pipes.GeneralContext"
+    }
+  ],
+  "Parameters": {
+    "username": "The unique username for the new user.",
+    "password": "The password for the new user.",
+    "roles": "Comma-separated list of roles (e.g., admin, editor, viewer)."
+  },
+  "ResultType": "WebCLI.Core.Models.CommandResult"
+}
