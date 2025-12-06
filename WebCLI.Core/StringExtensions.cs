@@ -17,8 +17,12 @@ namespace WebCLI.Core
         /// <returns></returns>
         public static string RightSideOf(this string value, string splitCharacter)
         {
-            var values = Regex.Split(value, splitCharacter);
-            return values.Skip(1).First();
+            var values = value.Split(new[] { splitCharacter }, StringSplitOptions.None);
+            if (values.Length <= 1)
+            {
+                throw new InvalidOperationException($"The split character '{splitCharacter}' was not found in the string.");
+            }
+            return string.Join(splitCharacter, values.Skip(1));
         }
 
         /// <summary>
@@ -29,7 +33,7 @@ namespace WebCLI.Core
         /// <returns></returns>
         public static string LeftSideOf(this string value, string splitCharacter)
         {
-            var values = Regex.Split(value, splitCharacter);
+            var values = value.Split(new[] { splitCharacter }, StringSplitOptions.None);
             return values.First();
         }
 
@@ -44,8 +48,12 @@ namespace WebCLI.Core
             if (item == null) return false;
             if (string.IsNullOrEmpty(nodeName)) return false;
 
-            if (!item.ContainsKey(nodeName)) return false;
-            return true;
+            if (item is IDictionary<string, object> dictionaryItem)
+            {
+                return dictionaryItem.ContainsKey(nodeName);
+            }
+            
+            return false;
         }
 
 
@@ -61,8 +69,6 @@ namespace WebCLI.Core
 
             try
             {
-                // The original logic was inverted. It should return true if the item at the location is NOT null.
-                // And false if it IS null or an exception occurs (e.g., out of bounds).
                 return item[location] != null;
             }
             catch (Exception)
