@@ -3,6 +3,7 @@ using WebCLI.Core.Contracts;
 using WebCLI.Core.Models;
 using WebCLI.API.Models;
 using System.Dynamic;
+using System.Linq; // Added for ToDictionary
 
 namespace WebCLI.API.Controllers
 {
@@ -32,7 +33,9 @@ namespace WebCLI.API.Controllers
             // This logic will need refinement based on how PipelineDefinition.Type is used
 
             // Attempt to execute as a Command
-            var command = new Command(request.CommandName, request.Parameters);
+            var command = new Command(
+                request.CommandName,
+                request.Parameters?.ToDictionary(p => p.Key, p => p.Value?.ToString()));
 
             var commandResult = await _pipelineInitializer.ExecuteCommandPipeline(command);
 
