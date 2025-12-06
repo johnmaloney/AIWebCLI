@@ -30,10 +30,23 @@ namespace WebCLI.Core.Repositories
             foreach (var file in Directory.GetFiles(_pipelineDefinitionPath, "*.json"))
             {
                 var json = File.ReadAllText(file);
-                var definition = JsonConvert.DeserializeObject<PipelineDefinition>(json);
-                if (definition != null)
+                try
                 {
-                    definitions.Add(definition);
+                    var definition = JsonConvert.DeserializeObject<PipelineDefinition>(json);
+                    if (definition != null)
+                    {
+                        definitions.Add(definition);
+                    }
+                }
+                catch (JsonReaderException ex)
+                {
+                    // Log the error and ignore the invalid file
+                    System.Console.WriteLine($"Warning: Could not parse JSON file '{file}'. Error: {ex.Message}");
+                }
+                catch (JsonSerializationException ex)
+                {
+                    // Log other serialization errors and ignore the invalid file
+                    System.Console.WriteLine($"Warning: Could not deserialize JSON file '{file}'. Error: {ex.Message}");
                 }
             }
             return definitions;
