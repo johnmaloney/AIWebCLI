@@ -29,7 +29,7 @@ namespace WebCLI.Core.Pipes
             Type contextType = GetTypeFromConfiguration(pipeConfiguration, useContextType: true);
 
             if (contextType == null) throw new InvalidOperationException($"Could not find pipe context type '{pipeConfiguration.ContextType}'.");
-            if (!typeof(IContext).IsAssignableFrom(contextType)) throw new InvalidOperationException($"Type '{pipeConfiguration.ContextType}' does not implement IPipeContext.");
+            if (!typeof(IContext).IsAssignableFrom(contextType)) throw new InvalidOperationException($"Type '{pipeConfiguration.ContextType}' does not implement IContext."); // Corrected message
 
             return (IContext)Activator.CreateInstance(contextType);
         }
