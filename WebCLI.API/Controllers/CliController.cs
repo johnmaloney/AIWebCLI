@@ -28,11 +28,6 @@ namespace WebCLI.API.Controllers
                 { Success = false, Message = "CommandName cannot be empty.", ResponseType = "text" });
             }
 
-            // Determine if it's a Command or Query based on definition (requires repository lookup)
-            // For now, let's assume all are commands unless explicitly a query
-            // This logic will need refinement based on how PipelineDefinition.Type is used
-
-            // Attempt to execute as a Command
             var command = new Command(
                 request.CommandName,
                 request.Parameters?.ToDictionary(p => p.Key, p => p.Value?.ToString()));
