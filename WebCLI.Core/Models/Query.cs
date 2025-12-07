@@ -1,19 +1,16 @@
 using System.Collections.Generic;
-using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Models
 {
-    public class Query : IQueryCriteria
+    public class Query<TResult> : IQuery<TResult>
     {
-        public string Name { get; set; }
-        public Dictionary<string, string> Criteria { get; set; }
-        public IAuthContext UserContext { get; set; }
+        public string Name { get; }
+        public Dictionary<string, string> Parameters { get; }
 
-        public Query(string name, Dictionary<string, string> criteria = null, IAuthContext userContext = null)
+        public Query(string name, Dictionary<string, string> parameters = null)
         {
             Name = name;
-            Criteria = criteria ?? new Dictionary<string, string>();
-            UserContext = userContext;
+            Parameters = parameters ?? new Dictionary<string, string>();
         }
     }
 }
