@@ -1,66 +1,50 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using WebCLI.Core.Contracts;
+using WebCLI.Core.Models;
 using WebCLI.Core.Models.Definitions;
 
 namespace WebCLI.Core.Pipes
 {
     public class ReflectionPipelineFactory : IPipelineFactory
     {
-        public IPipe CreatePipe(PipeConfiguration pipeConfiguration)
+        private readonly IServiceProvider _serviceProvider;
+
+        public ReflectionPipelineFactory(IServiceProvider serviceProvider)
         {
-            if (pipeConfiguration == null) throw new ArgumentNullException(nameof(pipeConfiguration));
-            if (string.IsNullOrWhiteSpace(pipeConfiguration.Type)) throw new ArgumentException("Pipe Type cannot be null or empty.", nameof(pipeConfiguration));
-
-            Type pipeType = GetTypeFromConfiguration(pipeConfiguration);
-
-            if (pipeType == null) throw new InvalidOperationException($"Could not find pipe type '{pipeConfiguration.Type}'.");
-            if (!typeof(IPipe).IsAssignableFrom(pipeType)) throw new InvalidOperationException($"Type '{pipeConfiguration.Type}' does not implement IPipe.");
-
-            return (IPipe)Activator.CreateInstance(pipeType);
+            _serviceProvider = serviceProvider;
         }
 
-        public IContext CreatePipeContext(PipeConfiguration pipeConfiguration)
+        public IPipe CreatePipe(PipeDefinition pipeDefinition)
         {
-            if (pipeConfiguration == null) throw new ArgumentNullException(nameof(pipeConfiguration));
-            if (string.IsNullOrWhiteSpace(pipeConfiguration.ContextType)) throw new ArgumentException("Pipe ContextType cannot be null or empty.", nameof(pipeConfiguration));
+            var pipeType = Assembly.GetExecutingAssembly()
+                                   .GetTypes()
+                                   .FirstOrDefault(t => t.Name == pipeDefinition.Name && typeof(IPipe).IsAssignableFrom(t));
 
-            Type contextType = GetTypeFromConfiguration(pipeConfiguration, useContextType: true);
+            if (pipeType == null)
+            {
+                throw new InvalidOperationException($"Pipe type '{pipeDefinition.Name}' not found.");
+            }
 
-            if (contextType == null) throw new InvalidOperationException($"Could not find pipe context type '{pipeConfiguration.ContextType}'.");
-            if (!typeof(IContext).IsAssignableFrom(contextType)) throw new InvalidOperationException($"Type '{pipeConfiguration.ContextType}' does not implement IContext."); // Consolidated: Corrected message
-
-            return (IContext)Activator.CreateInstance(contextType);
+            return (IPipe)_serviceProvider.GetService(pipeType);
         }
 
-        private Type GetTypeFromConfiguration(PipeConfiguration pipeConfiguration, bool useContextType = false)
+        public IContext CreatePipeContext(PipeDefinition pipeDefinition)
         {
-            string typeName = useContextType ? pipeConfiguration.ContextType : pipeConfiguration.Type;
-            string assemblyName = pipeConfiguration.Assembly;
+            // This method might become obsolete or simplified if initial contexts are handled differently
+            return new GeneralContext(); 
+        }
 
-            if (!string.IsNullOrWhiteSpace(assemblyName))
-            {
-                // Load the specified assembly
-                try
-                {
-                    var assembly = Assembly.Load(assemblyName);
-                    return assembly.GetType(typeName);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception (e.g., assembly not found or could not be loaded)
-                    Console.WriteLine($"Error loading assembly '{assemblyName}' or type '{typeName}': {ex.Message}");
-                    return null;
-                }
-            }
-            else
-            {
-                // Search in all currently loaded assemblies if no assembly is specified
-                return AppDomain.CurrentDomain.GetAssemblies()
-                                .SelectMany(a => a.GetTypes())
-                                .FirstOrDefault(t => t.FullName.Equals(typeName, StringComparison.OrdinalIgnoreCase));
-            }
+        public IContext CreateInitialCommandContext(ICommand command)
+        {
+            return new GeneralContext { Command = command, CommandResult = new CommandResult() };
+        }
+
+        public IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query)
+        {
+            return new GeneralContext { Query = query, QueryResult = new QueryResult<TResult>() }; // Assuming QueryResult<TResult> exists
         }
     }
 }
