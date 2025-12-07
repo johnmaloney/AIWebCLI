@@ -16,7 +16,7 @@ namespace WebCLI.Core.Models
         public object Response
         {
             get => CommandResult?.Response ?? QueryResult?.Data; // Use Data for QueryResult as per IQueryResult
-            private set // Should be settable for ICommandResult and IContext
+            set // Change from private set to public set
             {
                 if (CommandResult != null) CommandResult.Response = value;
                 // For IQueryResult, 'Data' is the setter
@@ -34,8 +34,9 @@ namespace WebCLI.Core.Models
         // Explicit implementation for ICommandResult.Messages as List<string>
         List<string> ICommandResult.Messages { get => _messages; set => _messages = value; }
 
-        // IQueryResult does not define 'Messages', so no explicit implementation needed here.
-        // We'll manage IQueryResult messages via a similar pattern or assume it's handled externally if it needs to be set.
+        // Now IQueryResult also defines 'Messages', so we need to implement it explicitly or through a shared property.
+        // We will make it explicit to match the List<string> type, similar to ICommandResult.
+        List<string> IQueryResult.Messages { get => _messages; set => _messages = value; }
 
         public object Data // From IQueryResult
         {
@@ -49,14 +50,14 @@ namespace WebCLI.Core.Models
         public ICommand Command { get; set; }
         public IQuery<object> Query { get; set; } // Fix CS0305: using object as placeholder
         public CommandResult CommandResult { get; set; }
-        public IQueryResult QueryResult { get; set; } // This is still an empty interface based on current read
+        public IQueryResult QueryResult { get; set; }
 
         // Method from IContext
         public void AddMessage(params string[] messages)
         {
             if (messages != null) _messages.AddRange(messages);
             if (CommandResult != null && messages != null) CommandResult.Messages.AddRange(messages);
-            // IQueryResult does not have AddMessage in its current definition, if it ever does, it would be added here.
+            if (QueryResult != null && messages != null) QueryResult.Messages.AddRange(messages); // Now IQueryResult has Messages
         }
 
         // Constructor to initialize Identifier, Arguments, Options
