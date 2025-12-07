@@ -3,17 +3,27 @@ using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Models
 {
-    public class QueryResult : IQueryResult
+    public class QueryResult<T> : IQueryResult
     {
-        public bool IsSuccessful { get; set; }
-        public string Message { get; set; }
-        public object Data { get; set; }
+        public bool Success { get; set; }
+        public List<string> Messages { get; set; } = new List<string>();
+        public T Data { get; set; }
+        public string ResponseType { get; set; }
 
-        public QueryResult(bool isSuccessful, string message, object data = null)
+        public QueryResult(bool success, string message, T data, string responseType = "json")
         {
-            IsSuccessful = isSuccessful;
-            Message = message;
+            Success = success;
+            Messages.Add(message);
             Data = data;
+            ResponseType = responseType;
         }
+
+        public QueryResult()
+        {
+            // Default constructor for deserialization or easy initialization
+        }
+
+        // Explicit interface implementation for non-generic IQueryResult
+        object IQueryResult.Data => Data;
     }
 }
