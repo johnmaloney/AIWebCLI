@@ -3,7 +3,8 @@ using WebCLI.Core.Contracts;
 using WebCLI.Core.Models;
 using WebCLI.API.Models;
 using System.Dynamic;
-using System.Linq; // Added for ToDictionary
+using System.Linq; 
+using WebCLI.Core.Models.Definitions; // Add this line
 
 namespace WebCLI.API.Controllers
 {
