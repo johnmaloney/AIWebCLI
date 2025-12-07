@@ -6,7 +6,7 @@ namespace WebCLI.Core.Pipes
     public class GeneralContext : APipeContext
     {
         public Command Command { get; set; }
-        public Query Query { get; set; }
+        public Query<object> Query { get; set; }
         public ILogger Logger { get; set; } // Example for logging within pipes
         // Add any other general-purpose properties that pipes might need
 
