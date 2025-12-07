@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Models;
 using WebCLI.Core.Pipes;
-using WebCLI.Core.Models.Definitions; // Add this line
+using WebCLI.Core.Models.Definitions;
 
 namespace WebCLI.Core.Services
 {
@@ -16,78 +16,22 @@ namespace WebCLI.Core.Services
         private readonly IServiceProvider _serviceProvider;
         private readonly ConcurrentDictionary<string, PipelineDefinition> _pipelineDefinitions;
         private readonly ConcurrentDictionary<string, Func<ICommand, Task<CommandResult>>> _commandPipelines;
-        private readonly ConcurrentDictionary<string, Func<IQuery, Task<object>>> _queryPipelines;
+        private readonly ConcurrentDictionary<string, Func<IQuery<object>, Task<object>>> _queryPipelines; // Change here
 
         public PipelineInitializer(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _pipelineDefinitions = new ConcurrentDictionary<string, PipelineDefinition>();
             _commandPipelines = new ConcurrentDictionary<string, Func<ICommand, Task<CommandResult>>>();
-            _queryPipelines = new ConcurrentDictionary<string, Func<IQuery, Task<object>>>();
+            _queryPipelines = new ConcurrentDictionary<string, Func<IQuery<object>, Task<object>>>(); // Change here
             InitializePipelines();
         }
 
-        private void InitializePipelines()
-        {
-            var commandDefinitions = GetCommandDefinitions();
-            foreach (var definition in commandDefinitions)
-            {
-                _pipelineDefinitions.TryAdd(definition.Name, definition);
-                _commandPipelines.TryAdd(definition.Name, CreateCommandPipelineDelegate(definition));
-            }
-
-            var queryDefinitions = GetQueryDefinitions();
-            foreach (var definition in queryDefinitions)
-            {
-                _pipelineDefinitions.TryAdd(definition.Name, definition);
-                _queryPipelines.TryAdd(definition.Name, CreateQueryPipelineDelegate(definition));
-            }
-        }
-
-        private IEnumerable<PipelineDefinition> GetCommandDefinitions()
-        {
-            var commandDefinitionType = typeof(ICommandDefinition);
-            var commandDefinitions = Assembly.GetAssembly(commandDefinitionType)
-                                             .GetTypes()
-                                             .Where(t => commandDefinitionType.IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
-                                             .Select(Activator.CreateInstance)
-                                             .Cast<ICommandDefinition>();
-
-            foreach (var cmdDef in commandDefinitions)
-            {
-                var definition = new PipelineDefinition
-                {
-                    Name = cmdDef.CommandName,
-                    Description = cmdDef.Description,
-                    Type = PipelineType.Command,
-                    Pipes = new List<PipeDefinition>()
-                };
-
-                // Add an initial pipe for demonstration/structure
-                definition.Pipes.Add(new PipeDefinition
-                {
-                    Name = $"{cmdDef.CommandName} Pipe",
-                    Description = $"Executes the {cmdDef.CommandName} command.",
-                    InputType = typeof(ICommand),
-                    OutputType = typeof(CommandResult),
-                    Parameters = new Dictionary<string, object>
-                    {
-                        { "CommandName", cmdDef.CommandName },
-                        { "ExpectedParameters", cmdDef.ExpectedParameters }
-                    }
-                });
-                yield return definition;
-            }
-        }
+        // ... other methods ...
 
         private IEnumerable<PipelineDefinition> GetQueryDefinitions()
         {
-            var queryDefinitionType = typeof(IQueryDefinition);
-            var queryDefinitions = Assembly.GetAssembly(queryDefinitionType)
-                                           .GetTypes()
-                                           .Where(t => queryDefinitionType.IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
-                                           .Select(Activator.CreateInstance)
-                                           .Cast<IQueryDefinition>();
+            // ... existing code ...
 
             foreach (var queryDef in queryDefinitions)
             {
@@ -103,7 +47,7 @@ namespace WebCLI.Core.Services
                 {
                     Name = $"{queryDef.QueryName} Pipe",
                     Description = $"Executes the {queryDef.QueryName} query.",
-                    InputType = typeof(IQuery),
+                    InputType = typeof(IQuery<object>), // Change here
                     OutputType = queryDef.ResultType, // Use the ResultType from the query definition
                     Parameters = new Dictionary<string, object>
                     {
@@ -115,23 +59,9 @@ namespace WebCLI.Core.Services
             }
         }
 
-        private Func<ICommand, Task<CommandResult>> CreateCommandPipelineDelegate(PipelineDefinition definition)
-        {
-            // Simplified for now, actual pipe execution logic would go here
-            return async (command) =>
-            {
-                // In a real scenario, this would chain pipes dynamically
-                await Task.Delay(10); // Simulate async work
-                return new CommandResult
-                {
-                    Success = true,
-                    Messages = { $"Command '{command.Name}' executed successfully." },
-                    Response = $"Response for {command.Name}"
-                };
-            };
-        }
+        // ... other methods ...
 
-        private Func<IQuery, Task<object>> CreateQueryPipelineDelegate(PipelineDefinition definition)
+        private Func<IQuery<object>, Task<object>> CreateQueryPipelineDelegate(PipelineDefinition definition) // Change here
         {
             // Simplified for now, actual pipe execution logic would go here
             return async (query) =>
@@ -141,37 +71,6 @@ namespace WebCLI.Core.Services
             };
         }
 
-        public async Task<CommandResult> ExecuteCommandPipeline(ICommand command)
-        {
-            if (_commandPipelines.TryGetValue(command.Name, out var pipelineDelegate))
-            {
-                return await pipelineDelegate(command);
-            }
-            return new CommandResult
-            {
-                Success = false,
-                Messages = { $"Command '{command.Name}' not found." }
-            };
-        }
-
-        public async Task<TResult> ExecuteQueryPipeline<TResult>(IQuery<TResult> query)
-        {
-            if (_queryPipelines.TryGetValue(query.Name, out var pipelineDelegate))
-            {
-                var result = await pipelineDelegate(query);
-                if (result is TResult typedResult)
-                {
-                    return typedResult;
-                }
-                // Handle type mismatch or conversion error
-                throw new InvalidCastException($"Expected result of type {typeof(TResult).Name}, but got {result?.GetType().Name ?? "null"}.");
-            }
-            throw new InvalidOperationException($"Query '{query.Name}' not found.");
-        }
-
-        public IEnumerable<PipelineDefinition> GetAllPipelineDefinitions()
-        {
-            return _pipelineDefinitions.Values;
-        }
+        // ... rest of the file ...
     }
 }
