@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic; // Added for IEnumerable
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Models;
-using WebCLI.Core.Models.Definitions;
+using WebCLI.Core.Models.Definitions; // Added
 using WebCLI.Core.Pipes;
 
 namespace WebCLI.Core.Pipes
