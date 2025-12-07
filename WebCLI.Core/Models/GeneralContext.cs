@@ -1,17 +1,70 @@
 using WebCLI.Core.Contracts;
+using System;
 using System.Collections.Generic;
+using System.Linq; // Needed for ToArray()
 
 namespace WebCLI.Core.Models
 {
     public class GeneralContext : IContext, ICommandResult, IQueryResult
     {
-        public ICommand Command { get; set; }
-        public IQuery Query { get; set; }
-        public CommandResult CommandResult { get; set; }
-        public IQueryResult QueryResult { get; set; } // Will hold the generic QueryResult<TResult>
+        // Properties from IContext
+        public string Identifier { get; private set; } // Assuming it's set internally or via constructor
+        public List<string> Arguments { get; private set; } // Matches IContext
+        public Dictionary<string, object> Options { get; private set; } // Matches IContext
+        
+        // Combined Response property for IContext and ICommandResult
+        public object Response
+        {
+            get => CommandResult?.Response ?? QueryResult?.Data; // Use Data for QueryResult as per IQueryResult
+            private set // Should be settable for ICommandResult and IContext
+            {
+                if (CommandResult != null) CommandResult.Response = value;
+                // For IQueryResult, 'Data' is the setter
+            }
+        }
+
+        // Properties from ICommandResult and IQueryResult
         public bool Success { get => CommandResult?.Success ?? QueryResult?.Success ?? false; set { if (CommandResult != null) CommandResult.Success = value; if (QueryResult != null) QueryResult.Success = value; } }
-        public List<string> Messages { get => CommandResult?.Messages ?? QueryResult?.Messages ?? new List<string>(); set { if (CommandResult != null) CommandResult.Messages = value; if (QueryResult != null) QueryResult.Messages = value; } }
-        public object Data { get => CommandResult?.Response ?? QueryResult?.Data; set { if (CommandResult != null) CommandResult.Response = value; if (QueryResult != null) QueryResult.Data = value; } }
+        
+        private List<string> _messages = new List<string>(); // Internal list for messages
+
+        // Explicit implementation for IContext.Messages as string[]
+        string[] IContext.Messages => _messages.ToArray();
+
+        // Explicit implementation for ICommandResult.Messages as List<string>
+        List<string> ICommandResult.Messages { get => _messages; set => _messages = value; }
+
+        // IQueryResult does not define 'Messages', so no explicit implementation needed here.
+        // We'll manage IQueryResult messages via a similar pattern or assume it's handled externally if it needs to be set.
+
+        public object Data // From IQueryResult
+        {
+            get => QueryResult?.Data;
+            set { if (QueryResult != null) QueryResult.Data = value; } // IQueryResult.Data has a setter
+        }
+
         public string ResponseType { get => CommandResult?.ResponseType ?? QueryResult?.ResponseType; set { if (CommandResult != null) CommandResult.ResponseType = value; if (QueryResult != null) QueryResult.ResponseType = value; } }
+
+        // Original properties
+        public ICommand Command { get; set; }
+        public IQuery<object> Query { get; set; } // Fix CS0305: using object as placeholder
+        public CommandResult CommandResult { get; set; }
+        public IQueryResult QueryResult { get; set; } // This is still an empty interface based on current read
+
+        // Method from IContext
+        public void AddMessage(params string[] messages)
+        {
+            if (messages != null) _messages.AddRange(messages);
+            if (CommandResult != null && messages != null) CommandResult.Messages.AddRange(messages);
+            // IQueryResult does not have AddMessage in its current definition, if it ever does, it would be added here.
+        }
+
+        // Constructor to initialize Identifier, Arguments, Options
+        public GeneralContext()
+        {
+            Identifier = Guid.NewGuid().ToString(); // Placeholder
+            Arguments = new List<string>(); // Matches IContext
+            Options = new Dictionary<string, object>(); // Matches IContext
+        }
     }
 }
