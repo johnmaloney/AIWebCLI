@@ -24,6 +24,10 @@ namespace WebCLI.Core.Models
         }
 
         // Explicit interface implementation for non-generic IQueryResult
-        object IQueryResult.Data => Data;
+        object IQueryResult.Data
+        {
+            get => Data;
+            set => Data = (T)value; // Add the setter and cast to T
+        }
     }
 }
