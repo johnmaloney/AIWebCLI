@@ -1,5 +1,7 @@
 using WebCLI.Core.Models;
-using System.Collections.Generic; // Added for IEnumerable
+using System.Collections.Generic;
+using System.Threading.Tasks; // Add this line
+using WebCLI.Core.Models.Definitions; // Add this line
 
 namespace WebCLI.Core.Contracts
 {
