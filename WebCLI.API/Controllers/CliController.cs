@@ -53,5 +53,28 @@ namespace WebCLI.API.Controllers
             return StatusCode(500, new CliCommandResponse
             { Success = false, Message = "An unexpected error occurred.", ResponseType = "text" });
         }
+
+        [HttpGet("pipelines")]
+        public IActionResult GetPipelineDetails()
+        {
+            var pipelineDefinitions = _pipelineInitializer.GetAllPipelineDefinitions();
+
+            var pipelineDetailsList = pipelineDefinitions.Select(pd => new PipelineDetailsDto
+            {
+                Name = pd.Name,
+                Description = pd.Description,
+                Type = pd.Type.ToString(), // Assuming Type is an enum or has a sensible ToString()
+                Pipes = pd.Pipes.Select(p => new PipeDetailsDto
+                {
+                    Name = p.Name,
+                    Description = p.Description,
+                    InputType = p.InputType?.Name,
+                    OutputType = p.OutputType?.Name,
+                    Parameters = p.Parameters?.ToDictionary(param => param.Key, param => param.Value?.ToString())
+                }).ToList()
+            }).ToList();
+
+            return Ok(pipelineDetailsList);
+        }
     }
 }
