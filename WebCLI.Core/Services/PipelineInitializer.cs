@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Models;
 using WebCLI.Core.Pipes;
+using WebCLI.Core.Models.Definitions; // Add this line
 
 namespace WebCLI.Core.Services
 {
