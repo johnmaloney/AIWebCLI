@@ -5,8 +5,8 @@ namespace WebCLI.Core.Contracts
 {
     public interface IPipelineFactory
     {
-        IPipe CreatePipe(PipeDefinition pipeDefinition);
-        IContext CreatePipeContext(PipeDefinition pipeDefinition);
+        IPipe CreatePipe(PipeConfiguration pipeConfiguration);
+        IContext CreatePipeContext(PipeConfiguration pipeConfiguration);
         IContext CreateInitialCommandContext(ICommand command); // New method
         IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query); // New method
     }
