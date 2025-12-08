@@ -17,21 +17,21 @@ namespace WebCLI.Core.Pipes
             _serviceProvider = serviceProvider;
         }
 
-        public IPipe CreatePipe(PipeDefinition pipeDefinition)
+        public IPipe CreatePipe(PipeConfiguration pipeConfiguration)
         {
             var pipeType = Assembly.GetExecutingAssembly()
                                    .GetTypes()
-                                   .FirstOrDefault(t => t.Name == pipeDefinition.Name && typeof(IPipe).IsAssignableFrom(t));
+                                   .FirstOrDefault(t => t.Name == pipeConfiguration.Name && typeof(IPipe).IsAssignableFrom(t));
 
             if (pipeType == null)
             {
-                throw new InvalidOperationException($"Pipe type '{pipeDefinition.Name}' not found.");
+                throw new InvalidOperationException($"Pipe type '{pipeConfiguration.Name}' not found.");
             }
 
             return (IPipe)_serviceProvider.GetService(pipeType);
         }
 
-        public IContext CreatePipeContext(PipeDefinition pipeDefinition)
+        public IContext CreatePipeContext(PipeConfiguration pipeConfiguration)
         {
             // This method might become obsolete or simplified if initial contexts are handled differently
             return new GeneralContext(); 
