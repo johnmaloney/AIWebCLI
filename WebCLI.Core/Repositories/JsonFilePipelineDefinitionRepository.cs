@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Options; // Add this
 using Newtonsoft.Json;
 using WebCLI.Core.Models;
 using WebCLI.Core.Models.Definitions;
+using WebCLI.Core.Contracts; // Ensure this is present
+using WebCLI.Core.Configuration; // Add this
 
 namespace WebCLI.Core.Repositories
 {
@@ -12,9 +15,14 @@ namespace WebCLI.Core.Repositories
         private readonly string _pipelineDefinitionPath;
         private readonly Dictionary<string, PipelineDefinition> _pipelineDefinitions;
 
-        public JsonFilePipelineDefinitionRepository(string pipelineDefinitionPath)
+        // Update constructor to accept IOptions<PipelineSettings>
+        public JsonFilePipelineDefinitionRepository(IOptions<PipelineSettings> pipelineSettings)
         {
-            _pipelineDefinitionPath = pipelineDefinitionPath;
+            _pipelineDefinitionPath = pipelineSettings.Value.PipelineDefinitionPath;
+            if (string.IsNullOrEmpty(_pipelineDefinitionPath))
+            {
+                throw new InvalidOperationException("PipelineDefinitionPath configuration is missing in PipelineSettings.");
+            }
             _pipelineDefinitions = LoadPipelineDefinitions();
         }
 
