@@ -1,26 +1,28 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebCLI.Core.Contracts;
+using System.Collections.Generic; 
+using WebCLI.Core.Contracts; // Ensure this is present and correct
 using WebCLI.Core.Models;
-using WebCLI.Core.Models.Definitions;
+using WebCLI.Core.Models.Definitions; 
+// using WebCLI.Core.Pipes; // This using is no longer needed for IPipelineFactory
 
 namespace WebCLI.Core.Pipes
 {
     public class DynamicPipelineInitializer : IPipelineInitializer
     {
         private readonly IPipelineDefinitionRepository _pipelineDefinitionRepository;
-        private readonly IPipelineFactory _pipelineFactory;
+        private readonly WebCLI.Core.Contracts.IPipelineFactory _pipelineFactory; // Explicitly use Contracts.IPipelineFactory
 
         public DynamicPipelineInitializer(
             IPipelineDefinitionRepository pipelineDefinitionRepository,
-            IPipelineFactory pipelineFactory)
+            WebCLI.Core.Contracts.IPipelineFactory pipelineFactory) // Explicitly use Contracts.IPipelineFactory
         {
             _pipelineDefinitionRepository = pipelineDefinitionRepository;
             _pipelineFactory = pipelineFactory;
         }
 
-        public async Task<ICommandResult> ExecuteCommandPipeline(Command command)
+        public async Task<CommandResult> ExecuteCommandPipeline(ICommand command)
         {
             if (command == null) throw new ArgumentNullException(nameof(command));
 
@@ -35,44 +37,42 @@ namespace WebCLI.Core.Pipes
                 return new CommandResult(false, $"Pipeline '{command.Name}' is not a command pipeline.");
             }
 
-            return await BuildAndExecutePipeline(pipelineDefinition, command);
+            return await BuildAndExecuteCommandPipeline(pipelineDefinition, command);
         }
 
-        public async Task<IQueryResult> ExecuteQueryPipeline(Query query)
+        public async Task<TResult> ExecuteQueryPipeline<TResult>(IQuery<TResult> query)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
 
             var pipelineDefinition = _pipelineDefinitionRepository.GetPipelineDefinition(query.Name);
             if (pipelineDefinition == null)
             {
-                return new QueryResult(false, $"Query pipeline '{query.Name}' not found.", null);
+                throw new InvalidOperationException($"Query pipeline '{query.Name}' not found.");
             }
 
             if (pipelineDefinition.Type != "Query")
             {
-                return new QueryResult(false, $"Pipeline '{query.Name}' is not a query pipeline.", null);
+                throw new InvalidOperationException($"Pipeline '{query.Name}' is not a query pipeline.");
             }
             
-            return (IQueryResult)await BuildAndExecutePipeline(pipelineDefinition, query); // Cast is safe because we check Type above
+            return await BuildAndExecuteQueryPipeline<TResult>(pipelineDefinition, query);
         }
 
-        private async Task<ICommandResult> BuildAndExecutePipeline(PipelineDefinition definition, Command command)
+        private async Task<CommandResult> BuildAndExecuteCommandPipeline(PipelineDefinition definition, ICommand command)
         {
             if (!definition.Pipes.Any()) return new CommandResult(true, "Command pipeline executed with no pipes.");
 
             IPipe firstPipe = null;
             IPipe currentPipe = null;
-            IContext initialContext = null;
+            IContext initialContext = _pipelineFactory.CreateInitialCommandContext(command); 
 
             foreach (var pipeConfig in definition.Pipes)
             {
                 var pipe = _pipelineFactory.CreatePipe(pipeConfig);
-                var context = _pipelineFactory.CreatePipeContext(pipeConfig);
-
+                
                 if (firstPipe == null)
                 {
                     firstPipe = pipe;
-                    initialContext = context;
                 }
                 else
                 {
@@ -81,37 +81,30 @@ namespace WebCLI.Core.Pipes
                 currentPipe = pipe;
             }
             
-            // Assuming the initial context needs to be populated with command/query data
-            // This part needs refinement based on how APipeContext will be used and populated
-            if (initialContext is GeneralContext generalContext)
-            {
-                generalContext.Command = command; // Example: Populating the command
-                // You might need to add properties to GeneralContext or create specific contexts
-            }
-
-            // Execute the pipeline using the Process method
             await firstPipe.Process(initialContext);
 
-            return initialContext as ICommandResult; // Assuming the result is stored in the context
+            if (initialContext is ICommandResult commandResult)
+            {
+                return (CommandResult)commandResult;
+            }
+            return new CommandResult(false, "Command pipeline did not return a valid result.");
         }
 
-         private async Task<IQueryResult> BuildAndExecutePipeline(PipelineDefinition definition, Query query)
+         private async Task<TResult> BuildAndExecuteQueryPipeline<TResult>(PipelineDefinition definition, IQuery<TResult> query)
         {
-            if (!definition.Pipes.Any()) return new QueryResult(true, "Query pipeline executed with no pipes.", null);
+            if (!definition.Pipes.Any()) throw new InvalidOperationException("Query pipeline executed with no pipes.");
 
             IPipe firstPipe = null;
             IPipe currentPipe = null;
-            IContext initialContext = null;
+            IContext initialContext = _pipelineFactory.CreateInitialQueryContext(query); 
 
             foreach (var pipeConfig in definition.Pipes)
             {
                 var pipe = _pipelineFactory.CreatePipe(pipeConfig);
-                var context = _pipelineFactory.CreatePipeContext(pipeConfig);
-
+                
                 if (firstPipe == null)
                 {
                     firstPipe = pipe;
-                    initialContext = context;
                 }
                 else
                 {
@@ -120,18 +113,18 @@ namespace WebCLI.Core.Pipes
                 currentPipe = pipe;
             }
 
-            // Assuming the initial context needs to be populated with command/query data
-            // This part needs refinement based on how APipeContext will be used and populated
-            if (initialContext is GeneralContext generalContext)
-            {
-                generalContext.Query = query; // Example: Populating the query
-                // You might need to add properties to GeneralContext or create specific contexts
-            }
-
-            // Execute the pipeline using the Process method
             await firstPipe.Process(initialContext);
 
-            return initialContext as IQueryResult; // Assuming the result is stored in the context
+            if (initialContext is IQueryResult queryResult && queryResult.Data is TResult result)
+            {
+                return result;
+            }
+            throw new InvalidCastException($"Expected query result of type {typeof(TResult).Name}, but got unexpected result.");
+        }
+
+        public IEnumerable<PipelineDefinition> GetAllPipelineDefinitions()
+        {
+            return _pipelineDefinitionRepository.GetAllPipelineDefinitions();
         }
     }
 }

@@ -5,15 +5,15 @@ namespace WebCLI.Core.Pipes
 {
     public class GeneralContext : APipeContext
     {
-        public Command Command { get; set; }
-        public Query Query { get; set; }
-        public ILogger Logger { get; set; } // Example for logging within pipes
-        // Add any other general-purpose properties that pipes might need
+        public ICommand Command { get; set; }
+        public WebCLI.Core.Models.IQuery<object> Query { get; set; } // Type changed to IQuery<object>
+        public WebCLI.Core.Contracts.IQueryResult QueryResult { get; set; } // Added QueryResult
+        public WebCLI.Core.Contracts.ICommandResult CommandResult { get; set; } // Added CommandResult
+        public ILogger Logger { get; set; }
 
         public GeneralContext()
         {
-            // Initialize with a default logger or inject one
-            Logger = new ConsoleLogger(); 
+            Logger = new ConsoleLogger();
         }
 
         public override void AddMessage(params string[] messages)
@@ -22,7 +22,6 @@ namespace WebCLI.Core.Pipes
         }
     }
 
-    // Simple console logger for demonstration
     public class ConsoleLogger : ILogger
     {
         public void Log(string message)

@@ -12,15 +12,15 @@ namespace WebCLI.Core.Pipes
         {
             if (context is GeneralContext generalContext && generalContext.Command != null)
             {
-                // Placeholder for actual validation logic
-                if (generalContext.Command.Options.GetValueOrDefault("username") == null ||
-                    string.IsNullOrWhiteSpace(generalContext.Command.Options["username"])) {
+                if (generalContext.Command.Options == null ||
+                    !generalContext.Command.Options.ContainsKey("username") ||
+                    string.IsNullOrWhiteSpace(generalContext.Command.Options["username"]))
+                {
                     return new CommandResult(false, "Validation failed: Username is required.");
                 }
-                // Simulate successful validation
                 generalContext.Logger.Log("Validation successful.");
             }
-            return await base.Handle(context); // Pass to the next pipe
+            return await base.Handle(context);
         }
     }
 }

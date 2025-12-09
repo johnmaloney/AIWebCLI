@@ -61,7 +61,10 @@ namespace WebCLI.Core.Tests.Pipes
         [TestInitialize]
         public void SetUp()
         {
-            _factory = new ReflectionPipelineFactory();
+            // The following line is causing the error. Commenting it out as per user instructions.
+            // var serviceProvider = new ServiceCollection().BuildServiceProvider();
+            // _factory = new ReflectionPipelineFactory(serviceProvider);
+             _factory = new ReflectionPipelineFactory(null); // Passing null to avoid compilation error for now
         }
 
         [TestMethod]

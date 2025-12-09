@@ -3,7 +3,8 @@ using WebCLI.Core.Contracts;
 using WebCLI.Core.Models;
 using WebCLI.API.Models;
 using System.Dynamic;
-using System.Linq; // Added for ToDictionary
+using System.Linq; 
+using WebCLI.Core.Models.Definitions; // Add this line
 
 namespace WebCLI.API.Controllers
 {
@@ -28,11 +29,6 @@ namespace WebCLI.API.Controllers
                 { Success = false, Message = "CommandName cannot be empty.", ResponseType = "text" });
             }
 
-            // Determine if it's a Command or Query based on definition (requires repository lookup)
-            // For now, let's assume all are commands unless explicitly a query
-            // This logic will need refinement based on how PipelineDefinition.Type is used
-
-            // Attempt to execute as a Command
             var command = new Command(
                 request.CommandName,
                 request.Parameters?.ToDictionary(p => p.Key, p => p.Value?.ToString()));
@@ -52,6 +48,29 @@ namespace WebCLI.API.Controllers
 
             return StatusCode(500, new CliCommandResponse
             { Success = false, Message = "An unexpected error occurred.", ResponseType = "text" });
+        }
+
+        [HttpGet("pipelines")]
+        public IActionResult GetPipelineDetails()
+        {
+            var pipelineDefinitions = _pipelineInitializer.GetAllPipelineDefinitions();
+
+            var pipelineDetailsList = pipelineDefinitions.Select(pd => new PipelineDetailsDto
+            {
+                Name = pd.Name,
+                Description = pd.Description,
+                Type = pd.Type.ToString(), // Assuming Type is an enum or has a sensible ToString()
+                Pipes = pd.Pipes.Select(p => new PipeDetailsDto
+                {
+                    Name = p.Name,
+                    Description = p.Description,
+                    InputType = p.InputType,
+                    OutputType = p.OutputType,
+                    Parameters = p.Parameters?.ToDictionary(param => param.Key, param => param.Value?.ToString())
+                }).ToList()
+            }).ToList();
+
+            return Ok(pipelineDetailsList);
         }
     }
 }

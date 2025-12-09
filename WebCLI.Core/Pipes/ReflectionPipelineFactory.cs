@@ -1,66 +1,50 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using WebCLI.Core.Contracts;
+using WebCLI.Core.Contracts; // Ensure this is present and correct
+using WebCLI.Core.Models;
 using WebCLI.Core.Models.Definitions;
+// using WebCLI.Core.Pipes; // This using is no longer needed for IPipelineFactory
 
 namespace WebCLI.Core.Pipes
 {
-    public class ReflectionPipelineFactory : IPipelineFactory
+    public class ReflectionPipelineFactory : WebCLI.Core.Contracts.IPipelineFactory // Explicitly implement Contracts.IPipelineFactory
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public ReflectionPipelineFactory(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         public IPipe CreatePipe(PipeConfiguration pipeConfiguration)
         {
-            if (pipeConfiguration == null) throw new ArgumentNullException(nameof(pipeConfiguration));
-            if (string.IsNullOrWhiteSpace(pipeConfiguration.Type)) throw new ArgumentException("Pipe Type cannot be null or empty.", nameof(pipeConfiguration));
+            var pipeType = Assembly.GetExecutingAssembly()
+                                   .GetTypes()
+                                   .FirstOrDefault(t => t.Name == pipeConfiguration.Name && typeof(IPipe).IsAssignableFrom(t));
 
-            Type pipeType = GetTypeFromConfiguration(pipeConfiguration);
+            if (pipeType == null)
+            {
+                throw new InvalidOperationException($"Pipe type '{pipeConfiguration.Name}' not found.");
+            }
 
-            if (pipeType == null) throw new InvalidOperationException($"Could not find pipe type '{pipeConfiguration.Type}'.");
-            if (!typeof(IPipe).IsAssignableFrom(pipeType)) throw new InvalidOperationException($"Type '{pipeConfiguration.Type}' does not implement IPipe.");
-
-            return (IPipe)Activator.CreateInstance(pipeType);
+            return (IPipe)_serviceProvider.GetService(pipeType);
         }
 
         public IContext CreatePipeContext(PipeConfiguration pipeConfiguration)
         {
-            if (pipeConfiguration == null) throw new ArgumentNullException(nameof(pipeConfiguration));
-            if (string.IsNullOrWhiteSpace(pipeConfiguration.ContextType)) throw new ArgumentException("Pipe ContextType cannot be null or empty.", nameof(pipeConfiguration));
-
-            Type contextType = GetTypeFromConfiguration(pipeConfiguration, useContextType: true);
-
-            if (contextType == null) throw new InvalidOperationException($"Could not find pipe context type '{pipeConfiguration.ContextType}'.");
-            if (!typeof(IContext).IsAssignableFrom(contextType)) throw new InvalidOperationException($"Type '{pipeConfiguration.ContextType}' does not implement IContext."); // Consolidated: Corrected message
-
-            return (IContext)Activator.CreateInstance(contextType);
+            return new GeneralContext(); 
         }
 
-        private Type GetTypeFromConfiguration(PipeConfiguration pipeConfiguration, bool useContextType = false)
+        public IContext CreateInitialCommandContext(ICommand command)
         {
-            string typeName = useContextType ? pipeConfiguration.ContextType : pipeConfiguration.Type;
-            string assemblyName = pipeConfiguration.Assembly;
+            return new GeneralContext { Command = command, CommandResult = new CommandResult(true, "Command initialized.") }; 
+        }
 
-            if (!string.IsNullOrWhiteSpace(assemblyName))
-            {
-                // Load the specified assembly
-                try
-                {
-                    var assembly = Assembly.Load(assemblyName);
-                    return assembly.GetType(typeName);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception (e.g., assembly not found or could not be loaded)
-                    Console.WriteLine($"Error loading assembly '{assemblyName}' or type '{typeName}': {ex.Message}");
-                    return null;
-                }
-            }
-            else
-            {
-                // Search in all currently loaded assemblies if no assembly is specified
-                return AppDomain.CurrentDomain.GetAssemblies()
-                                .SelectMany(a => a.GetTypes())
-                                .FirstOrDefault(t => t.FullName.Equals(typeName, StringComparison.OrdinalIgnoreCase));
-            }
+        public IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query)
+        {
+            return new GeneralContext { Query = (IQuery<object>)query, QueryResult = new QueryResult<object>(true, "Query initialized.", null) }; 
         }
     }
 }
