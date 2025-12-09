@@ -33,18 +33,20 @@ namespace WebCLI.Core.Pipes
 
         public IContext CreatePipeContext(PipeConfiguration pipeConfiguration)
         {
-            // This method might become obsolete or simplified if initial contexts are handled differently
             return new GeneralContext(); 
         }
 
         public IContext CreateInitialCommandContext(ICommand command)
         {
-            return new GeneralContext { Command = command, CommandResult = new CommandResult() };
+            return new GeneralContext { Command = command, CommandResult = new CommandResult(true, "Command initialized.") }; // Fixed CommandResult instantiation
         }
 
         public IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query)
         {
-            return new GeneralContext { Query = query, QueryResult = new QueryResult<TResult>() }; // Assuming QueryResult<TResult> exists
+            // Changed GeneralContext.Query to IQuery<object> in previous step.
+            // Here, we can directly assign if we make GeneralContext.Query generic or use IQuery<object> as intended.
+            // For now, let's assume GeneralContext.Query becomes IQuery<object> as per the previous todo.
+            return new GeneralContext { Query = (IQuery<object>)query, QueryResult = new QueryResult<object>(true, "Query initialized.", null) }; // Fixed type cast and QueryResult instantiation
         }
     }
 }
