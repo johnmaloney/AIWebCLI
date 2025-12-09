@@ -12,6 +12,7 @@
     <Folder Include="Models\Definitions\" />
     <Folder Include="Pipes\" />
     <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
