@@ -7,7 +7,7 @@ namespace WebCLI.Core.Contracts
     {
         IPipe CreatePipe(PipeConfiguration pipeConfiguration);
         IContext CreatePipeContext(PipeConfiguration pipeConfiguration);
-        IContext CreateInitialCommandContext(ICommand command); // New method
-        IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query); // New method
+        IContext CreateInitialCommandContext(ICommand command); // This method should be present
+        IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query); // This method should be present
     }
 }
