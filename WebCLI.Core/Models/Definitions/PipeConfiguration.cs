@@ -6,6 +6,7 @@ namespace WebCLI.Core.Models.Definitions
 {
     public class PipeConfiguration
     {
+        public string Name { get; set; } // Added Name property
         public string Type { get; set; }
         public string Assembly { get; set; }
         public string Namespace { get; set; }
