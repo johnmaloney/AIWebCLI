@@ -31,7 +31,7 @@ namespace WebCLI.API
             builder.Services.AddSwaggerGen();
 
             // Dependency Injection for WebCLI.Core services
-            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineDefinitionRepository, WebCLI.Core.Repositories.JsonFilePipelineDefinitionRepository>(sp =>
+            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineDefinitionRepository>(sp =>
             {
                 var pipelineDefinitionPath = builder.Configuration["PipelineDefinitionPath"];
                 if (string.IsNullOrEmpty(pipelineDefinitionPath))
