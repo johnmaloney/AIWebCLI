@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Pipes;
 using WebCLI.Core.Repositories;
-using WebCLI.Core.Configuration; // Add this
+using WebCLI.Core.Configuration; 
 
 namespace WebCLI.API
 {
@@ -35,7 +35,7 @@ namespace WebCLI.API
             builder.Services.Configure<PipelineSettings>(builder.Configuration.GetSection("PipelineSettings"));
 
             // Simplified DI registration for IPipelineDefinitionRepository
-            builder.Services.AddSingleton<IPipelineDefinitionRepository, JsonFilePipelineDefinitionRepository>();
+            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineDefinitionRepository, WebCLI.Core.Repositories.JsonFilePipelineDefinitionRepository>();
 
             // Dependency Injection for WebCLI.Core services
             builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineFactory, WebCLI.Core.Pipes.ReflectionPipelineFactory>(); // Explicitly use Contracts.IPipelineFactory
