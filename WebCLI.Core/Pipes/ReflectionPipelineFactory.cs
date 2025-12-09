@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using WebCLI.Core.Contracts;
+using WebCLI.Core.Contracts; // Ensure this is present and correct
 using WebCLI.Core.Models;
 using WebCLI.Core.Models.Definitions;
+// using WebCLI.Core.Pipes; // This using is no longer needed for IPipelineFactory
 
 namespace WebCLI.Core.Pipes
 {
-    public class ReflectionPipelineFactory : IPipelineFactory
+    public class ReflectionPipelineFactory : WebCLI.Core.Contracts.IPipelineFactory // Explicitly implement Contracts.IPipelineFactory
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -38,15 +39,12 @@ namespace WebCLI.Core.Pipes
 
         public IContext CreateInitialCommandContext(ICommand command)
         {
-            return new GeneralContext { Command = command, CommandResult = new CommandResult(true, "Command initialized.") }; // Fixed CommandResult instantiation
+            return new GeneralContext { Command = command, CommandResult = new CommandResult(true, "Command initialized.") }; 
         }
 
         public IContext CreateInitialQueryContext<TResult>(IQuery<TResult> query)
         {
-            // Changed GeneralContext.Query to IQuery<object> in previous step.
-            // Here, we can directly assign if we make GeneralContext.Query generic or use IQuery<object> as intended.
-            // For now, let's assume GeneralContext.Query becomes IQuery<object> as per the previous todo.
-            return new GeneralContext { Query = (IQuery<object>)query, QueryResult = new QueryResult<object>(true, "Query initialized.", null) }; // Fixed type cast and QueryResult instantiation
+            return new GeneralContext { Query = (IQuery<object>)query, QueryResult = new QueryResult<object>(true, "Query initialized.", null) }; 
         }
     }
 }
