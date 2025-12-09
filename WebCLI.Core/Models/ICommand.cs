@@ -4,5 +4,6 @@ namespace WebCLI.Core.Models
     {
         string Name { get; }
         System.Collections.Generic.Dictionary<string, string> Parameters { get; }
+        System.Collections.Generic.Dictionary<string, string> Options { get; }
     }
 }
