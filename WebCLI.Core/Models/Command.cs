@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using WebCLI.Core.Contracts;
 
 namespace WebCLI.Core.Models
 {
@@ -7,12 +8,17 @@ namespace WebCLI.Core.Models
         public string Name { get; }
         public Dictionary<string, string> Parameters { get; }
         public Dictionary<string, string> Options { get; }
+        public IUserContext UserContext { get; }
 
-        public Command(string name, Dictionary<string, string> parameters = null, Dictionary<string, string> options = null)
+        public Command(string name,
+                       Dictionary<string, string> parameters = null,
+                       Dictionary<string<string> options = null,
+                       IUserContext userContext = null) // Added userContext parameter
         {
             Name = name;
             Parameters = parameters ?? new Dictionary<string, string>();
             Options = options ?? new Dictionary<string, string>();
+            UserContext = userContext; // Initialize UserContext
         }
     }
 }
