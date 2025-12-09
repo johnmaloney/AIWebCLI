@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Extensions.Options; // Add this
+using Microsoft.Extensions.Options; 
 using Newtonsoft.Json;
 using WebCLI.Core.Models;
 using WebCLI.Core.Models.Definitions;
-using WebCLI.Core.Contracts; // Ensure this is present
-using WebCLI.Core.Configuration; // Add this
+using WebCLI.Core.Contracts;
+using WebCLI.Core.Configuration;
 
 namespace WebCLI.Core.Repositories
 {
@@ -15,7 +15,6 @@ namespace WebCLI.Core.Repositories
         private readonly string _pipelineDefinitionPath;
         private readonly Dictionary<string, PipelineDefinition> _pipelineDefinitions;
 
-        // Update constructor to accept IOptions<PipelineSettings>
         public JsonFilePipelineDefinitionRepository(IOptions<PipelineSettings> pipelineSettings)
         {
             _pipelineDefinitionPath = pipelineSettings.Value.PipelineDefinitionPath;
@@ -30,7 +29,6 @@ namespace WebCLI.Core.Repositories
         {
             if (!File.Exists(_pipelineDefinitionPath))
             {
-                // Log or throw an exception if the file doesn't exist
                 return new Dictionary<string, PipelineDefinition>();
             }
             var json = File.ReadAllText(_pipelineDefinitionPath);
