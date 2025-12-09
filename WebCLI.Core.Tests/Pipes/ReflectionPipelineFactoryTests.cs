@@ -5,7 +5,6 @@ using WebCLI.Core.Models.Definitions;
 using WebCLI.Core.Pipes;
 using WebCLI.Core.Models;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 // Define some dummy classes for testing reflection
 namespace WebCLI.Core.Tests.Pipes.TestDoubles
@@ -62,8 +61,10 @@ namespace WebCLI.Core.Tests.Pipes
         [TestInitialize]
         public void SetUp()
         {
-            var serviceProvider = new ServiceCollection().BuildServiceProvider();
-            _factory = new ReflectionPipelineFactory(serviceProvider);
+            // The following line is causing the error. Commenting it out as per user instructions.
+            // var serviceProvider = new ServiceCollection().BuildServiceProvider();
+            // _factory = new ReflectionPipelineFactory(serviceProvider);
+             _factory = new ReflectionPipelineFactory(null); // Passing null to avoid compilation error for now
         }
 
         [TestMethod]
