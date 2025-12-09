@@ -5,8 +5,10 @@ namespace WebCLI.Core.Pipes
 {
     public class GeneralContext : APipeContext
     {
-        public ICommand Command { get; set; } // Changed from 'Command' to 'ICommand'
-        public Query<object> Query { get; set; }
+        public ICommand Command { get; set; }
+        public WebCLI.Core.Models.IQuery<object> Query { get; set; } // Type changed to IQuery<object>
+        public WebCLI.Core.Contracts.IQueryResult QueryResult { get; set; } // Added QueryResult
+        public WebCLI.Core.Contracts.ICommandResult CommandResult { get; set; } // Added CommandResult
         public ILogger Logger { get; set; }
 
         public GeneralContext()
