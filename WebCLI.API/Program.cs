@@ -38,7 +38,7 @@ namespace WebCLI.API
                 {
                     throw new InvalidOperationException("PipelineDefinitionPath configuration is missing.");
                 }
-                return (WebCLI.Core.Contracts.IPipelineDefinitionRepository)new JsonFilePipelineDefinitionRepository(pipelineDefinitionPath);
+                return new JsonFilePipelineDefinitionRepository(pipelineDefinitionPath);
             });
             builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineFactory, WebCLI.Core.Pipes.ReflectionPipelineFactory>(); // Explicitly use Contracts.IPipelineFactory
             builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineInitializer, WebCLI.Core.Pipes.DynamicPipelineInitializer>();
