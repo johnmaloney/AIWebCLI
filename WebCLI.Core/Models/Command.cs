@@ -7,12 +7,12 @@ namespace WebCLI.Core.Models
     {
         public string Name { get; }
         public Dictionary<string, string> Parameters { get; }
-        public string Options { get; }
+        public Dictionary<string, string> Options { get; } // Corrected type
         public IUserContext UserContext { get; }
 
         public Command(string name,
                        Dictionary<string, string> parameters = null,
-                       Dictionary<string, string> options = null, // Corrected syntax here
+                       Dictionary<string, string> options = null,
                        IUserContext userContext = null)
         {
             Name = name;
