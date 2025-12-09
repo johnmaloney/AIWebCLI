@@ -64,8 +64,8 @@ namespace WebCLI.API.Controllers
                 {
                     Name = p.Name,
                     Description = p.Description,
-                    InputType = p.InputType?.Name,
-                    OutputType = p.OutputType?.Name,
+                    InputType = p.InputType,
+                    OutputType = p.OutputType,
                     Parameters = p.Parameters?.ToDictionary(param => param.Key, param => param.Value?.ToString())
                 }).ToList()
             }).ToList();
