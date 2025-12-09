@@ -1,22 +1,22 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic; // Added for IEnumerable
-using WebCLI.Core.Contracts;
+using System.Collections.Generic; 
+using WebCLI.Core.Contracts; // Ensure this is present and correct
 using WebCLI.Core.Models;
-using WebCLI.Core.Models.Definitions; // Added
-using WebCLI.Core.Pipes;
+using WebCLI.Core.Models.Definitions; 
+// using WebCLI.Core.Pipes; // This using is no longer needed for IPipelineFactory
 
 namespace WebCLI.Core.Pipes
 {
     public class DynamicPipelineInitializer : IPipelineInitializer
     {
         private readonly IPipelineDefinitionRepository _pipelineDefinitionRepository;
-        private readonly IPipelineFactory _pipelineFactory;
+        private readonly WebCLI.Core.Contracts.IPipelineFactory _pipelineFactory; // Explicitly use Contracts.IPipelineFactory
 
         public DynamicPipelineInitializer(
             IPipelineDefinitionRepository pipelineDefinitionRepository,
-            IPipelineFactory pipelineFactory)
+            WebCLI.Core.Contracts.IPipelineFactory pipelineFactory) // Explicitly use Contracts.IPipelineFactory
         {
             _pipelineDefinitionRepository = pipelineDefinitionRepository;
             _pipelineFactory = pipelineFactory;
@@ -32,7 +32,6 @@ namespace WebCLI.Core.Pipes
                 return new CommandResult(false, $"Command pipeline '{command.Name}' not found.");
             }
 
-            // Assuming PipelineDefinition.Type is a string. If it's an enum, adjust accordingly.
             if (pipelineDefinition.Type != "Command")
             {
                 return new CommandResult(false, $"Pipeline '{command.Name}' is not a command pipeline.");
@@ -51,13 +50,11 @@ namespace WebCLI.Core.Pipes
                 throw new InvalidOperationException($"Query pipeline '{query.Name}' not found.");
             }
 
-            // Assuming PipelineDefinition.Type is a string. If it's an enum, adjust accordingly.
             if (pipelineDefinition.Type != "Query")
             {
                 throw new InvalidOperationException($"Pipeline '{query.Name}' is not a query pipeline.");
             }
             
-            // This now returns TResult directly, handling the casting internally
             return await BuildAndExecuteQueryPipeline<TResult>(pipelineDefinition, query);
         }
 
@@ -67,13 +64,12 @@ namespace WebCLI.Core.Pipes
 
             IPipe firstPipe = null;
             IPipe currentPipe = null;
-            IContext initialContext = _pipelineFactory.CreateInitialCommandContext(command); // Use a specific factory method
+            IContext initialContext = _pipelineFactory.CreateInitialCommandContext(command); 
 
             foreach (var pipeConfig in definition.Pipes)
             {
                 var pipe = _pipelineFactory.CreatePipe(pipeConfig);
-                // The context should be passed and transformed by pipes, not created per pipe here
-
+                
                 if (firstPipe == null)
                 {
                     firstPipe = pipe;
@@ -87,10 +83,9 @@ namespace WebCLI.Core.Pipes
             
             await firstPipe.Process(initialContext);
 
-            // Assuming the CommandResult is now available in the context
             if (initialContext is ICommandResult commandResult)
             {
-                return (CommandResult)commandResult; // Cast to concrete type
+                return (CommandResult)commandResult;
             }
             return new CommandResult(false, "Command pipeline did not return a valid result.");
         }
@@ -101,7 +96,7 @@ namespace WebCLI.Core.Pipes
 
             IPipe firstPipe = null;
             IPipe currentPipe = null;
-            IContext initialContext = _pipelineFactory.CreateInitialQueryContext(query); // Use a specific factory method
+            IContext initialContext = _pipelineFactory.CreateInitialQueryContext(query); 
 
             foreach (var pipeConfig in definition.Pipes)
             {
@@ -120,7 +115,6 @@ namespace WebCLI.Core.Pipes
 
             await firstPipe.Process(initialContext);
 
-            // Assuming the TResult is now available in the context
             if (initialContext is IQueryResult queryResult && queryResult.Data is TResult result)
             {
                 return result;
@@ -130,7 +124,6 @@ namespace WebCLI.Core.Pipes
 
         public IEnumerable<PipelineDefinition> GetAllPipelineDefinitions()
         {
-            // This will retrieve all definitions from the repository
             return _pipelineDefinitionRepository.GetAllPipelineDefinitions();
         }
     }
