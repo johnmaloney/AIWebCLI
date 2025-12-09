@@ -31,7 +31,7 @@ namespace WebCLI.API
             builder.Services.AddSwaggerGen();
 
             // Dependency Injection for WebCLI.Core services
-            builder.Services.AddSingleton<IPipelineDefinitionRepository>(sp =>
+            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineDefinitionRepository>(sp =>
             {
                 var pipelineDefinitionPath = builder.Configuration["PipelineDefinitionPath"];
                 if (string.IsNullOrEmpty(pipelineDefinitionPath))
@@ -40,8 +40,8 @@ namespace WebCLI.API
                 }
                 return new JsonFilePipelineDefinitionRepository(pipelineDefinitionPath);
             });
-            builder.Services.AddSingleton<IPipelineFactory, ReflectionPipelineFactory>();
-            builder.Services.AddSingleton<IPipelineInitializer, DynamicPipelineInitializer>();
+            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineFactory, WebCLI.Core.Pipes.ReflectionPipelineFactory>(); // Explicitly use Contracts.IPipelineFactory
+            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineInitializer, WebCLI.Core.Pipes.DynamicPipelineInitializer>();
 
             var app = builder.Build();
 
