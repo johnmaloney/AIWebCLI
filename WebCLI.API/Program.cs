@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using WebCLI.Core.Contracts;
 using WebCLI.Core.Pipes;
 using WebCLI.Core.Repositories;
+using WebCLI.Core.Configuration; // Add this
 
 namespace WebCLI.API
 {
@@ -30,16 +31,13 @@ namespace WebCLI.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Configure PipelineSettings
+            builder.Services.Configure<PipelineSettings>(builder.Configuration.GetSection("PipelineSettings"));
+
+            // Simplified DI registration for IPipelineDefinitionRepository
+            builder.Services.AddSingleton<IPipelineDefinitionRepository, JsonFilePipelineDefinitionRepository>();
+
             // Dependency Injection for WebCLI.Core services
-            builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineDefinitionRepository>(sp =>
-            {
-                var pipelineDefinitionPath = builder.Configuration["PipelineDefinitionPath"];
-                if (string.IsNullOrEmpty(pipelineDefinitionPath))
-                {
-                    throw new InvalidOperationException("PipelineDefinitionPath configuration is missing.");
-                }
-                return new JsonFilePipelineDefinitionRepository(pipelineDefinitionPath);
-            });
             builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineFactory, WebCLI.Core.Pipes.ReflectionPipelineFactory>(); // Explicitly use Contracts.IPipelineFactory
             builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineInitializer, WebCLI.Core.Pipes.DynamicPipelineInitializer>();
 
