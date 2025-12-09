@@ -23,7 +23,7 @@ namespace WebCLI.Core.Pipes
             return await base.Handle(context); // Pass to the next pipe
         }
 
-        private bool IsUserAdmin(IAuthContext userContext)
+        private bool IsUserAdmin(IUserContext userContext) // Changed parameter type to IUserContext
         {
             // Placeholder: Replace with actual user role checking
             return true; // For demonstration, always true
