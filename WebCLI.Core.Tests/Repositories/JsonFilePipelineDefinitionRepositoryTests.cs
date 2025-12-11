@@ -4,6 +4,8 @@ using System.Linq;
 using WebCLI.Core.Models.Definitions;
 using WebCLI.Core.Repositories;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
+using WebCLI.Core.Configuration;
 
 namespace WebCLI.Core.Tests.Repositories
 {
@@ -28,6 +30,11 @@ namespace WebCLI.Core.Tests.Repositories
             }
         }
 
+        private IOptions<PipelineSettings> CreatePipelineSettings(string path)
+        {
+            return Options.Create(new PipelineSettings { PipelineDefinitionPath = path });
+        }
+
         private void CreatePipelineFile(string fileName, string content)
         {
             File.WriteAllText(Path.Combine(_testPipelinePath, fileName), content);
@@ -39,7 +46,7 @@ namespace WebCLI.Core.Tests.Repositories
             // Arrange
             CreatePipelineFile("test1.json", "{\"Name\":\"TestCommand1\", \"Description\":\"Desc1\", \"Type\":\"Command\", \"Pipes\":[]}");
             CreatePipelineFile("test2.json", "{\"Name\":\"TestQuery1\", \"Description\":\"Desc2\", \"Type\":\"Query\", \"Pipes\":[]}");
-            var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(_testPipelinePath));
 
             // Act
             var definitions = repository.GetAllPipelineDefinitions().ToList();
@@ -57,7 +64,7 @@ namespace WebCLI.Core.Tests.Repositories
             // Arrange
             CreatePipelineFile("test1.json", "{\"Name\":\"SpecificCommand\", \"Description\":\"Specific Description\", \"Type\":\"Command\", \"Pipes\":[]}");
             CreatePipelineFile("test2.json", "{\"Name\":\"OtherCommand\", \"Description\":\"Other Description\", \"Type\":\"Command\", \"Pipes\":[]}");
-            var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(_testPipelinePath));
 
             // Act
             var definition = repository.GetPipelineDefinition("SpecificCommand");
@@ -73,7 +80,7 @@ namespace WebCLI.Core.Tests.Repositories
         {
             // Arrange
             CreatePipelineFile("test1.json", "{\"Name\":\"CaseSensitiveTest\", \"Description\":\"Desc\", \"Type\":\"Command\", \"Pipes\":[]}");
-            var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(_testPipelinePath));
 
             // Act
             var definition = repository.GetPipelineDefinition("casesensitivetest");
@@ -88,7 +95,7 @@ namespace WebCLI.Core.Tests.Repositories
         {
             // Arrange
             CreatePipelineFile("test1.json", "{\"Name\":\"ExistingCommand\", \"Description\":\"Desc\", \"Type\":\"Command\", \"Pipes\":[]}");
-            var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(_testPipelinePath));
 
             // Act
             var definition = repository.GetPipelineDefinition("NonExistentCommand");
@@ -102,7 +109,7 @@ namespace WebCLI.Core.Tests.Repositories
         {
             // Arrange
             var nonExistentPath = Path.Combine(Path.GetTempPath(), "WebCLINonExistent", Path.GetRandomFileName());
-            var repository = new JsonFilePipelineDefinitionRepository(nonExistentPath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(nonExistentPath));
 
             // Act & Assert
             Assert.IsNotNull(repository.GetAllPipelineDefinitions()); // Should not throw
@@ -113,7 +120,7 @@ namespace WebCLI.Core.Tests.Repositories
         public void Constructor_ShouldHandleEmptyDirectory()
         {
             // Arrange
-            var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(_testPipelinePath));
 
             // Act
             var definitions = repository.GetAllPipelineDefinitions().ToList();
@@ -129,7 +136,7 @@ namespace WebCLI.Core.Tests.Repositories
             // Arrange
             CreatePipelineFile("valid.json", "{\"Name\":\"ValidCommand\", \"Description\":\"Desc\", \"Type\":\"Command\", \"Pipes\":[]}");
             CreatePipelineFile("invalid.json", "{ \"Name\": \"InvalidCommand\", \"Description\": \"Desc\", \"Type\": \"Command\", \"Pipes\": [ { \"Type\": \"InvalidPipe\", \"Assembly\": \"InvalidAssembly\" } \"extra_content\" ] }"); // Malformed JSON
-            var repository = new JsonFilePipelineDefinitionRepository(_testPipelinePath);
+            var repository = new JsonFilePipelineDefinitionRepository(CreatePipelineSettings(_testPipelinePath));
 
             // Act
             var definitions = repository.GetAllPipelineDefinitions().ToList();
