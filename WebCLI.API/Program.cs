@@ -32,7 +32,9 @@ namespace WebCLI.API
             builder.Services.AddSwaggerGen();
 
             // Configure PipelineSettings
-            builder.Services.Configure<PipelineSettings>(builder.Configuration.GetSection("PipelineSettings"));
+            builder.Services.AddOptions<PipelineSettings>()
+                    .Bind(builder.Configuration.GetSection("PipelineSettings"))
+                    .Validate(s => !string.IsNullOrWhiteSpace(s.PipelineDefinitionPath), "PipelineDefinitionPath must be set");
 
             // Simplified DI registration for IPipelineDefinitionRepository
             builder.Services.AddSingleton<WebCLI.Core.Contracts.IPipelineDefinitionRepository, WebCLI.Core.Repositories.JsonFilePipelineDefinitionRepository>();
