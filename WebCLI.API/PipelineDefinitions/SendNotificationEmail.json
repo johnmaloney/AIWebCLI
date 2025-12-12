@@ -1,0 +1,25 @@
+{
+  "Name": "SendNotificationEmail",
+  "Description": "Sends a customized email notification to a specified recipient.",
+  "Type": "Command",
+  "Pipes": [
+    {
+      "Name": "EmailValidation",
+      "Assembly": "WebCLI.Core.Pipes.EmailValidationPipe, WebCLI.Core",
+      "Type": "ValidationPipe",
+      "Configuration": {}
+    },
+    {
+      "Name": "TemplatingEngine",
+      "Assembly": "WebCLI.Core.Pipes.EmailTemplatingPipe, WebCLI.Core",
+      "Type": "TemplatingPipe",
+      "Configuration": { "TemplateId": "Notification" }
+    },
+    {
+      "Name": "SmtpClient",
+      "Assembly": "WebCLI.Core.Pipes.SmtpSendPipe, WebCLI.Core",
+      "Type": "EmailSendPipe",
+      "Configuration": { "SmtpServer": "smtp.example.com" }
+    }
+  ]
+}
