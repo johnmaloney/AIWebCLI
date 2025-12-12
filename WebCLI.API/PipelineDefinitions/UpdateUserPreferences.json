@@ -1,0 +1,25 @@
+{
+  "Name": "UpdateUserPreferences",
+  "Description": "Updates the preferences for a specific user, such as theme, notifications, and language settings.",
+  "Type": "Command",
+  "Pipes": [
+    {
+      "Name": "AuthenticateUser",
+      "Assembly": "WebCLI.Core.Pipes.AuthenticationPipe, WebCLI.Core",
+      "Type": "AuthenticationPipe",
+      "Configuration": {}
+    },
+    {
+      "Name": "ValidatePreferences",
+      "Assembly": "WebCLI.Core.Pipes.PreferenceValidationPipe, WebCLI.Core",
+      "Type": "ValidationPipe",
+      "Configuration": { "SchemaName": "UserPreferencesSchema" }
+    },
+    {
+      "Name": "PersistToDatabase",
+      "Assembly": "WebCLI.Core.Pipes.DatabasePersistencePipe, WebCLI.Core",
+      "Type": "PersistencePipe",
+      "Configuration": { "Table": "UserPreferences" }
+    }
+  ]
+}
