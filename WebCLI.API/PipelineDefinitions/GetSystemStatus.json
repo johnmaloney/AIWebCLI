@@ -1,0 +1,25 @@
+{
+  "Name": "GetSystemStatus",
+  "Description": "Retrieves the current operational status of various system components.",
+  "Type": "Query",
+  "Pipes": [
+    {
+      "Name": "LogRequest",
+      "Assembly": "WebCLI.Core.Pipes.LoggingPipe, WebCLI.Core",
+      "Type": "LoggingPipe",
+      "Configuration": { "LogLevel": "Info" }
+    },
+    {
+      "Name": "CheckDatabase",
+      "Assembly": "WebCLI.Core.Pipes.DatabaseCheckPipe, WebCLI.Core",
+      "Type": "DatabaseCheckPipe",
+      "Configuration": {}
+    },
+    {
+      "Name": "CheckApiHealth",
+      "Assembly": "WebCLI.Core.Pipes.ApiHealthCheckPipe, WebCLI.Core",
+      "Type": "ApiHealthCheckPipe",
+      "Configuration": { "Endpoint": "https://api.example.com/health" }
+    }
+  ]
+}
